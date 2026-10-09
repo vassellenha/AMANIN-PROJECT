@@ -65,6 +65,32 @@ svg { display: block; width: 1.3rem; height: 1.3rem; fill: none; stroke: current
   background: var(--bg);
   box-shadow: 0 0 60px rgba(8, 11, 16, .08);
 }
+
+/* -------- wider viewports: show the app as a centered, framed card instead of stretching full-bleed -------- */
+@media (min-width: 640px) {
+  body:has(> .app) {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 40px 20px;
+    background:
+      radial-gradient(ellipse 560px 420px at 10% 8%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 68%),
+      radial-gradient(ellipse 620px 480px at 92% 96%, color-mix(in srgb, var(--cyan) 9%, transparent), transparent 70%),
+      #e9edf4;
+  }
+  .app {
+    width: 460px;
+    border-radius: 36px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.5) inset,
+      0 40px 90px rgba(8, 11, 16, .16),
+      0 0 0 1px rgba(8, 11, 16, .04);
+  }
+  .topbar { border-radius: 36px 36px 0 0; }
+  body:has(.app #theme-toggle:checked) { background-color: #0b0e13; }
+}
+@media (min-width: 960px) {
+  .app { width: 500px; }
+}
 .theme-checkbox {
   position: absolute;
   width: 1px;

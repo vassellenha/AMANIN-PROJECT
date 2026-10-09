@@ -272,8 +272,13 @@ function analyzeText(text) {
   return {
     findings: [...new Set(findings)],
     urls,
+    score,
     level: score >= 4 ? "danger" : score >= 1 ? "caution" : "safe",
   };
+}
+
+function levelFromScore(score) {
+  return score >= 4 ? "danger" : score >= 1 ? "caution" : "safe";
 }
 
 const conversationInput = $("#chat-text");
@@ -286,10 +291,18 @@ conversationInput.addEventListener("input", () => {
   const text = conversationInput.value.slice(0, 2000);
   if (conversationInput.value !== text) conversationInput.value = text;
   conversationCount.textContent = `${text.length} / 2000 karakter`;
-  conversationAnalyzeButton.disabled = !text.trim();
+  updateAnalyzeButtonState();
   conversationResult.classList.add("is-hidden");
-  setStatus(conversationStatus, text.trim() ? "Pesan siap dianalisis di perangkat." : "Isi atau tempel pesan untuk memulai analisis.");
+  setStatus(conversationStatus, getComposedText().trim() ? "Siap dianalisis di perangkat." : "Lengkapi data di atas untuk memulai analisis.");
 });
+
+for (const id of ["#quick-rekening-number", "#quick-pay-amount", "#quick-pay-name"]) {
+  $(id)?.addEventListener("input", () => {
+    updateAnalyzeButtonState();
+    conversationResult.classList.add("is-hidden");
+    setStatus(conversationStatus, getComposedText().trim() ? "Siap dianalisis di perangkat." : "Lengkapi data di atas untuk memulai analisis.");
+  });
+}
 
 $("#chat-example").addEventListener("click", () => {
   conversationInput.value = "Selamat! Anda mendapat hadiah 150jt. Akun Anda akan diblokir jika tidak verifikasi sekarang. Klik https://bit.ly/hadiah-klaim dan kirim kode OTP Anda.";
@@ -319,53 +332,54 @@ $("#chat-paste").addEventListener("click", async () => {
 });
 
 conversationAnalyzeButton.addEventListener("click", async () => {
-  const text = conversationInput.value.trim();
+  const text = getComposedText().trim();
   if (!text) {
-    setStatus(conversationStatus, "Masukkan teks percakapan terlebih dahulu.", "error");
+    setStatus(conversationStatus, "Lengkapi data di atas terlebih dahulu.", "error");
     return;
   }
   conversationAnalyzeButton.disabled = true;
-  setStatus(conversationStatus, "Menganalisis pola pesan di perangkat…", "working");
-  startAnalysis("Membaca isi pesan dan memeriksa tanda-tanda penipuan.");
-  const assessment = analyzeText(text);
-  const title = assessment.level === "danger"
+  setStatus(conversationStatus, "Menganalisis pola di perangkat…", "working");
+  startAnalysis("Membaca data dan memeriksa tanda-tanda penipuan.");
+
+  const base = analyzeText(text);
+  const quick = getQuickFieldFindings();
+  const findings = [...new Set([...base.findings, ...quick.findings])];
+  const level = levelFromScore(base.score + quick.bonus);
+
+  const title = level === "danger"
     ? "Ada tanda risiko tinggi"
-    : assessment.level === "caution"
+    : level === "caution"
       ? "Perlu diperiksa lebih lanjut"
       : "Tidak ada pola umum yang terdeteksi";
-  const message = assessment.level === "danger"
-    ? "Pesan memiliki beberapa pola yang sering ditemukan pada penipuan. Jangan klik tautan atau bagikan kode dan data rahasia."
-    : assessment.level === "caution"
+  const message = level === "danger"
+    ? "Ditemukan beberapa pola yang sering ditemukan pada penipuan. Jangan klik tautan atau bagikan kode dan data rahasia."
+    : level === "caution"
       ? "Ada pola yang perlu diwaspadai. Verifikasi pengirim dan tujuan melalui kanal resmi sebelum bertindak."
-      : "Tidak ditemukan pola umum yang mencurigakan pada teks ini. Hasil ini bukan jaminan bahwa pesan aman.";
+      : "Tidak ditemukan pola umum yang mencurigakan. Hasil ini bukan jaminan bahwa data ini aman.";
   renderResult(conversationResult, {
     title,
     subtitle: "Pemeriksaan pola lokal · bukan verifikasi identitas pengirim",
     message,
-    findings: assessment.findings.length
-      ? assessment.findings
-      : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
-    level: assessment.level,
+    findings: findings.length ? findings : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
+    level,
   });
-  for (const url of assessment.urls) {
+  for (const url of base.urls) {
     const urlElement = document.createElement("div");
     urlElement.className = "result-url";
     urlElement.textContent = `Tautan ditemukan: ${url}`;
     conversationResult.append(urlElement);
   }
-  setStatus(conversationStatus, "Analisis selesai. Teks percakapan tidak keluar dari perangkat.");
-  conversationAnalyzeButton.disabled = !conversationInput.value.trim();
+  setStatus(conversationStatus, "Analisis selesai. Data tidak keluar dari perangkat.");
+  updateAnalyzeButtonState();
   await presentAnalysis({
-    level: assessment.level,
+    level,
     title,
     message,
-    findings: assessment.findings.length
-      ? assessment.findings
-      : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
+    findings: findings.length ? findings : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
     source: text,
-    sourceTitle: "Cuplikan percakapan",
-    score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
-    type: "chat",
+    sourceTitle: CHAT_CONTEXTS[currentContext]?.sourceTitle || "Cuplikan percakapan",
+    score: level === "danger" ? 92 : level === "caution" ? 58 : 12,
+    type: CHAT_CONTEXTS[currentContext]?.historyType || "chat",
   });
 });
 
@@ -877,36 +891,87 @@ function getInitialMode() {
   return requestedMode ?? window.location.hash.slice(1);
 }
 
+let currentContext = "chat";
+
 const CHAT_CONTEXTS = {
   chat: {
+    badge: "Scan Chat",
+    badgeIcon: '<path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/>',
+    iconClass: "chat-icon",
     heading: "Input teks percakapan",
     subtitle: "Tempel pesan yang mencurigakan untuk memeriksa pola scam.",
     placeholder: 'Tempel pesan di sini... Contoh: "Akun Anda akan diblokir. Verifikasi sekarang di https://bit.ly/..."',
     focus: "text",
-  },
-  link: {
-    heading: "Periksa tautan yang kamu terima",
-    subtitle: "Tempel link lengkap untuk memeriksa domain, pemendek tautan, dan pola phishing.",
-    placeholder: "Tempel tautan lengkap di sini... Contoh: https://promo-hadiah-resmi.com/klaim",
-    focus: "text",
-  },
-  rekening: {
-    heading: "Periksa nomor HP atau rekening",
-    subtitle: "Tempel nomor beserta pesan atau konteksnya agar polanya bisa diperiksa.",
-    placeholder: 'Tempel nomor HP/rekening beserta pesannya... Contoh: "Transfer ke 0812xxxxxxx a.n Budi, lalu kirim bukti ke saya."',
-    focus: "text",
-  },
-  pembayaran: {
-    heading: "Periksa detail pembayaran",
-    subtitle: "Tempel info Virtual Account, QRIS, atau e-Wallet sebelum kamu membayar.",
-    placeholder: 'Tempel detail pembayaran di sini... Contoh: "VA BCA 0912xxxxxxxx a.n Toko Aman, total Rp150.000."',
-    focus: "text",
+    showText: true,
+    showScreenshot: true,
+    actionLabel: "Analisis Percakapan",
+    idleStatus: "Isi atau tempel pesan untuk memulai analisis.",
+    sourceTitle: "Cuplikan percakapan",
+    historyType: "chat",
   },
   screenshot: {
+    badge: "Screenshot",
+    badgeIcon: '<path d="M4 5h16v14H4z"/><circle cx="9" cy="10" r="2"/><path d="m4 16 5-4 3 3 2-2 6 4"/>',
+    iconClass: "screenshot-icon",
     heading: "Input teks percakapan",
     subtitle: "Tempel pesan yang mencurigakan untuk memeriksa pola scam.",
     placeholder: 'Tempel pesan di sini... Contoh: "Akun Anda akan diblokir. Verifikasi sekarang di https://bit.ly/..."',
     focus: "screenshot",
+    showText: false,
+    showScreenshot: true,
+    actionLabel: "Analisis Percakapan",
+    idleStatus: "Isi atau tempel pesan untuk memulai analisis.",
+    sourceTitle: "Cuplikan percakapan",
+    historyType: "screenshot",
+  },
+  link: {
+    badge: "Tautan / Link",
+    badgeIcon: '<path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.2-1.2"/>',
+    iconClass: "link-icon",
+    heading: "Periksa tautan yang kamu terima",
+    subtitle: "Tempel link lengkap untuk memeriksa domain, pemendek tautan, dan pola phishing.",
+    placeholder: "Tempel tautan lengkap di sini... Contoh: https://promo-hadiah-resmi.com/klaim",
+    focus: "text",
+    showText: true,
+    showScreenshot: false,
+    actionLabel: "Periksa Tautan",
+    idleStatus: "Tempel tautan untuk memulai analisis.",
+    sourceTitle: "Tautan yang diperiksa",
+    historyType: "link",
+  },
+  rekening: {
+    badge: "No. / Rekening",
+    badgeIcon: '<path d="M3 6h18v13H3z"/><circle cx="10" cy="11" r="2.5"/><path d="M6 17c.8-2 2.2-3 4-3s3.2 1 4 3m3-6h2"/>',
+    iconClass: "rekening-icon",
+    heading: "Periksa nomor HP atau rekening",
+    subtitle: "Masukkan nomornya, tambahkan konteks pesan di bawah kalau ada.",
+    placeholder: "Opsional: tempel pesan atau percakapan terkait nomor ini...",
+    focus: "quick",
+    showText: true,
+    showScreenshot: false,
+    quickFields: "rekening",
+    textRequired: false,
+    actionLabel: "Periksa Nomor",
+    idleStatus: "Isi nomor HP atau rekening untuk memulai analisis.",
+    sourceTitle: "Nomor yang diperiksa",
+    historyType: "rekening",
+  },
+  pembayaran: {
+    badge: "Pembayaran",
+    badgeIcon: '<path d="M4 6h16v14H4z"/><path d="M4 9h16m-6 5h3"/>',
+    iconClass: "pembayaran-icon",
+    heading: "Periksa detail pembayaran",
+    subtitle: "Isi nominal dan penerima, tambahkan detail VA/QRIS di bawah kalau ada.",
+    placeholder: "Opsional: tempel detail Virtual Account/QRIS atau pesan terkait...",
+    focus: "quick",
+    showText: true,
+    showScreenshot: false,
+    quickFields: "pembayaran",
+    textRequired: false,
+    actionLabel: "Periksa Pembayaran",
+    idleStatus: "Isi nominal dan penerima untuk memulai analisis.",
+    sourceTitle: "Pembayaran yang diperiksa",
+    historyType: "pembayaran",
   },
 };
 
@@ -918,13 +983,88 @@ function getRequestedContext() {
   return "chat";
 }
 
+function getComposedText() {
+  const config = CHAT_CONTEXTS[currentContext] || CHAT_CONTEXTS.chat;
+  const extra = conversationInput?.value.trim() || "";
+  if (config.quickFields === "rekening") {
+    const number = $("#quick-rekening-number")?.value.trim() || "";
+    if (!number) return "";
+    return `Nomor HP/Rekening yang diperiksa: ${number}.${extra ? ` ${extra}` : ""}`;
+  }
+  if (config.quickFields === "pembayaran") {
+    const amount = $("#quick-pay-amount")?.value.trim() || "";
+    const name = $("#quick-pay-name")?.value.trim() || "";
+    if (!amount && !name) return "";
+    const amountText = amount ? `Rp${amount}` : "jumlah tidak diisi";
+    const nameText = name || "penerima tidak diisi";
+    return `Pembayaran ke ${nameText} sebesar ${amountText}.${extra ? ` ${extra}` : ""}`;
+  }
+  return extra;
+}
+
+function getQuickFieldFindings() {
+  const findings = [];
+  let bonus = 0;
+  const config = CHAT_CONTEXTS[currentContext];
+  if (config?.quickFields === "rekening") {
+    const number = $("#quick-rekening-number")?.value.trim() || "";
+    const digits = number.replace(/\D/g, "");
+    if (number && digits.length < 8) {
+      findings.push("Nomor terlalu pendek untuk format HP/rekening yang umum di Indonesia.");
+      bonus += 1;
+    } else if (digits && /^(\d)\1+$/.test(digits)) {
+      findings.push("Nomor terdiri dari digit yang berulang terus-menerus; pola ini sering dipakai pada nomor palsu.");
+      bonus += 2;
+    }
+  }
+  if (config?.quickFields === "pembayaran") {
+    const amount = Number(($("#quick-pay-amount")?.value || "").replace(/\D/g, ""));
+    if (amount >= 5000000) {
+      findings.push("Nominal pembayaran cukup besar; pastikan kamu benar-benar mengenali penerimanya sebelum membayar.");
+      bonus += 1;
+    }
+  }
+  return { findings, bonus };
+}
+
+function updateAnalyzeButtonState() {
+  conversationAnalyzeButton.disabled = !getComposedText().trim();
+}
+
 function applyChatContext(context) {
   const config = CHAT_CONTEXTS[context] || CHAT_CONTEXTS.chat;
+  currentContext = CHAT_CONTEXTS[context] ? context : "chat";
+
+  const badgeLabel = $("#context-badge-label");
+  const badgeSvg = $("#context-badge svg");
+  if (badgeLabel) badgeLabel.textContent = config.badge;
+  if (badgeSvg) badgeSvg.innerHTML = config.badgeIcon;
+
+  const icon = $("#conversation-icon");
+  if (icon) {
+    icon.classList.remove("chat-icon", "link-icon", "rekening-icon", "pembayaran-icon", "screenshot-icon");
+    icon.classList.add(config.iconClass);
+    icon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${config.badgeIcon}</svg>`;
+  }
+
   const headingEl = $("#conversation-title");
   const subtitleEl = $("#conversation-subtitle");
   if (headingEl) headingEl.textContent = config.heading;
   if (subtitleEl) subtitleEl.textContent = config.subtitle;
   if (conversationInput) conversationInput.placeholder = config.placeholder;
+
+  const actionLabelEl = $("#chat-text-analyze-label");
+  if (actionLabelEl) actionLabelEl.textContent = config.actionLabel;
+  if (!conversationInput?.value.trim() && !$("#quick-rekening-number")?.value.trim() && !$("#quick-pay-amount")?.value.trim() && !$("#quick-pay-name")?.value.trim()) {
+    setStatus(conversationStatus, config.idleStatus);
+  }
+
+  $("#quick-fields-rekening")?.classList.toggle("is-hidden", config.quickFields !== "rekening");
+  $("#quick-fields-pembayaran")?.classList.toggle("is-hidden", config.quickFields !== "pembayaran");
+  $(".conversation-check")?.classList.toggle("is-hidden", !config.showText);
+  $("#screenshot-section")?.classList.toggle("is-hidden", !config.showScreenshot);
+
+  updateAnalyzeButtonState();
   return config;
 }
 
@@ -935,6 +1075,9 @@ function focusChatTarget(target) {
       dropzone?.scrollIntoView({ behavior: "smooth", block: "center" });
       dropzone?.classList.add("quick-focus");
       window.setTimeout(() => dropzone?.classList.remove("quick-focus"), 1600);
+    } else if (target === "quick") {
+      const firstField = document.querySelector(".quick-fields:not(.is-hidden) input");
+      (firstField || conversationInput)?.focus({ preventScroll: false });
     } else {
       conversationInput?.focus({ preventScroll: false });
     }

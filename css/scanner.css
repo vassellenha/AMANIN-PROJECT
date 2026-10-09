@@ -28,8 +28,26 @@
 .panel-icon { flex: 0 0 39px; width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; color: #0752e7; background: #eaf1ff; }
 .panel-icon svg { width: 21px; height: 21px; }
 .chat-icon { color: #0b6ed0; background: #e5f5ff; }
+.link-icon { color: #0752e7; background: #e5edff; }
+.rekening-icon { color: #c22a55; background: #fde9ef; }
+.pembayaran-icon { color: #1c6fd6; background: #e7f0ff; }
+.screenshot-icon { color: #4338ca; background: #ede9fe; }
+.scanner-app:has(#theme-toggle:checked) .link-icon { color: #85a8ff; background: #15213f; }
+.scanner-app:has(#theme-toggle:checked) .rekening-icon { color: #ff93b2; background: #3a1726; }
+.scanner-app:has(#theme-toggle:checked) .pembayaran-icon { color: #83b4ff; background: #13294a; }
+.scanner-app:has(#theme-toggle:checked) .screenshot-icon { color: #b4a6ff; background: #211b3f; }
 .panel-heading h2 { margin: 0 0 3px; font: 700 13px "Plus Jakarta Sans",sans-serif; }
 .panel-heading p { margin: 0; color: var(--text-muted); font-size: 10px; line-height: 1.45; }
+
+.context-badge { width: fit-content; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 20px; color: var(--cyan); background: color-mix(in srgb, var(--cyan) 12%, var(--surface-soft)); font: 700 10px "Inter",sans-serif; letter-spacing: .2px; }
+.context-badge svg { width: 13px; height: 13px; }
+
+.quick-fields { display: grid; gap: 10px; }
+.quick-fields-row { grid-template-columns: 1fr 1fr; }
+.quick-field { display: grid; gap: 7px; color: var(--text-muted); font-size: 11px; font-weight: 700; }
+.quick-input { width: 100%; min-height: 44px; padding: 0 13px; border: 1px solid var(--border); border-radius: 12px; outline: none; color: var(--ink); background: var(--surface-soft); font: 600 12px "Inter",sans-serif; transition: border-color .2s, box-shadow .2s; }
+.quick-input::placeholder { color: var(--text-subtle); font-weight: 500; }
+.quick-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px color-mix(in srgb,var(--cyan) 14%,transparent); }
 .upload-zone { min-height: 153px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 15px; border: 1.5px dashed #aebbd0; border-radius: 16px; background: color-mix(in srgb,var(--surface-soft) 60%,transparent); text-align: center; cursor: pointer; transition: border-color .2s,background .2s; }
 .upload-zone:hover,.upload-zone.is-dragover { border-color: var(--cyan); background: color-mix(in srgb,var(--cyan) 8%,var(--surface-strong)); }
 .upload-zone.quick-focus { animation: upload-zone-pulse 1.6s ease-out; }
@@ -213,6 +231,7 @@
   .scan-panel { padding: 12px; }
   .panel-heading { gap: 8px; }
   .panel-heading h2 { font-size: 12px; }
+  .quick-fields-row { grid-template-columns: 1fr; }
   .analysis-content { gap: 10px; padding: 12px 12px 24px; }
   .risk-summary { padding: 17px 14px; }
 }

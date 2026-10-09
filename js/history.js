@@ -4,11 +4,21 @@ window.AmaninHistory = (() => {
   const KEY = "amanin_history";
   const MAX_ENTRIES = 50;
 
-  const TYPE_LABEL = { qr: "QR Code", chat: "Chat", screenshot: "Screenshot" };
+  const TYPE_LABEL = {
+    qr: "QR Code",
+    chat: "Chat",
+    screenshot: "Screenshot",
+    link: "Tautan / Link",
+    rekening: "No. / Rekening",
+    pembayaran: "Pembayaran",
+  };
   const TYPE_ICON = {
     qr: '<path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/>',
     chat: '<path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/>',
     screenshot: '<path d="M4 5h16v14H4z"/><circle cx="9" cy="10" r="2"/><path d="m4 16 5-4 3 3 2-2 6 4"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.2-1.2"/>',
+    rekening: '<path d="M3 6h18v13H3z"/><circle cx="10" cy="11" r="2.5"/><path d="M6 17c.8-2 2.2-3 4-3s3.2 1 4 3m3-6h2"/>',
+    pembayaran: '<path d="M4 6h16v14H4z"/><path d="M4 9h16m-6 5h3"/>',
   };
 
   function escapeHtml(value) {
@@ -91,7 +101,7 @@ window.AmaninHistory = (() => {
     const scoreText = typeof entry.score === "number" ? `${meta.label} ${entry.score}/100` : meta.label;
     const typeLabel = TYPE_LABEL[entry.type] || "Pemeriksaan";
     const icon = TYPE_ICON[entry.type] || TYPE_ICON.chat;
-    const href = entry.type === "qr" ? "scan.html?mode=qr" : "scan.html?mode=chat";
+    const href = entry.type === "qr" ? "scan.html?mode=qr" : `scan.html?mode=chat&context=${entry.type}`;
     const titleText = entry.source ? entry.source : entry.title;
     return `<a class="recent-card" href="${href}" data-history-id="${entry.id}">
       <span class="recent-icon ${meta.iconClass}"><svg viewBox="0 0 24 24">${icon}</svg></span>

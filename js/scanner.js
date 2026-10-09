@@ -172,6 +172,86 @@ function analyzeText(text) {
   };
 }
 
+const conversationInput = $("#chat-text");
+const conversationCount = $("#chat-text-count");
+const conversationAnalyzeButton = $("#chat-text-analyze");
+const conversationResult = $("#chat-text-result");
+const conversationStatus = $("#chat-text-status");
+
+conversationInput.addEventListener("input", () => {
+  const text = conversationInput.value.slice(0, 2000);
+  if (conversationInput.value !== text) conversationInput.value = text;
+  conversationCount.textContent = `${text.length} / 2000 karakter`;
+  conversationAnalyzeButton.disabled = !text.trim();
+  conversationResult.classList.add("is-hidden");
+  setStatus(conversationStatus, text.trim() ? "Pesan siap dianalisis di perangkat." : "Isi atau tempel pesan untuk memulai analisis.");
+});
+
+$("#chat-example").addEventListener("click", () => {
+  conversationInput.value = "Selamat! Anda mendapat hadiah 150jt. Akun Anda akan diblokir jika tidak verifikasi sekarang. Klik https://bit.ly/hadiah-klaim dan kirim kode OTP Anda.";
+  conversationInput.dispatchEvent(new Event("input", { bubbles: true }));
+  conversationInput.focus();
+});
+
+$("#chat-paste").addEventListener("click", async () => {
+  try {
+    if (!navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
+      throw new Error("Akses clipboard tidak tersedia di browser ini.");
+    }
+    const text = await navigator.clipboard.readText();
+    if (!text.trim()) {
+      setStatus(conversationStatus, "Clipboard kosong. Salin pesan terlebih dahulu.", "error");
+      return;
+    }
+    conversationInput.value = text.slice(0, 2000);
+    conversationInput.dispatchEvent(new Event("input", { bubbles: true }));
+    conversationInput.focus();
+    if (text.length > 2000) {
+      setStatus(conversationStatus, "Teks terlalu panjang dan dipotong menjadi 2.000 karakter.", "error");
+    }
+  } catch (error) {
+    setStatus(conversationStatus, `${error.message || "Clipboard tidak dapat diakses."} Tempel langsung ke kolom teks.`, "error");
+  }
+});
+
+conversationAnalyzeButton.addEventListener("click", () => {
+  const text = conversationInput.value.trim();
+  if (!text) {
+    setStatus(conversationStatus, "Masukkan teks percakapan terlebih dahulu.", "error");
+    return;
+  }
+  conversationAnalyzeButton.disabled = true;
+  setStatus(conversationStatus, "Menganalisis pola pesan di perangkat…", "working");
+  const assessment = analyzeText(text);
+  const title = assessment.level === "danger"
+    ? "Ada tanda risiko tinggi"
+    : assessment.level === "caution"
+      ? "Perlu diperiksa lebih lanjut"
+      : "Tidak ada pola umum yang terdeteksi";
+  const message = assessment.level === "danger"
+    ? "Pesan memiliki beberapa pola yang sering ditemukan pada penipuan. Jangan klik tautan atau bagikan kode dan data rahasia."
+    : assessment.level === "caution"
+      ? "Ada pola yang perlu diwaspadai. Verifikasi pengirim dan tujuan melalui kanal resmi sebelum bertindak."
+      : "Tidak ditemukan pola umum yang mencurigakan pada teks ini. Hasil ini bukan jaminan bahwa pesan aman.";
+  renderResult(conversationResult, {
+    title,
+    subtitle: "Pemeriksaan pola lokal · bukan verifikasi identitas pengirim",
+    message,
+    findings: assessment.findings.length
+      ? assessment.findings
+      : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
+    level: assessment.level,
+  });
+  for (const url of assessment.urls) {
+    const urlElement = document.createElement("div");
+    urlElement.className = "result-url";
+    urlElement.textContent = `Tautan ditemukan: ${url}`;
+    conversationResult.append(urlElement);
+  }
+  setStatus(conversationStatus, "Analisis selesai. Teks percakapan tidak keluar dari perangkat.");
+  conversationAnalyzeButton.disabled = !conversationInput.value.trim();
+});
+
 function renderResult(container, { title, subtitle, message, findings = [], level = "safe", value = "" }) {
   container.replaceChildren();
   container.classList.remove("is-hidden");
@@ -219,13 +299,16 @@ function renderResult(container, { title, subtitle, message, findings = [], leve
   }
 }
 
-function previewFile(file, input, image, wrapper, statusElement, removeButton, onRemove) {
+function previewFile(file, input, image, wrapper, statusElement, removeButton, onRemove, successMessage) {
   if (!validateImage(file, statusElement)) {
     input.value = "";
     return false;
   }
   const objectUrl = URL.createObjectURL(file);
-  image.onload = () => URL.revokeObjectURL(objectUrl);
+  image.onload = () => {
+    URL.revokeObjectURL(objectUrl);
+    window.AmaninToast?.show(successMessage);
+  };
   image.onerror = () => {
     URL.revokeObjectURL(objectUrl);
     setStatus(statusElement, "Gambar gagal dimuat. Coba pilih file gambar lain.", "error");
@@ -255,7 +338,7 @@ $("#qr-file").addEventListener("change", (event) => {
     selectedQrFile = null;
     $("#qr-analyze").disabled = true;
     $("#qr-result").classList.add("is-hidden");
-  })) {
+  }, "QR code berhasil diunggah")) {
     selectedQrFile = file;
     $("#qr-analyze").disabled = false;
     $("#qr-result").classList.add("is-hidden");
@@ -276,7 +359,7 @@ $("#qr-camera-file").addEventListener("change", (event) => {
     selectedQrFile = null;
     $("#qr-analyze").disabled = true;
     $("#qr-result").classList.add("is-hidden");
-  })) {
+  }, "Foto QR berhasil dimuat")) {
     selectedQrFile = file;
     $("#qr-analyze").disabled = false;
     $("#qr-result").classList.add("is-hidden");
@@ -302,7 +385,7 @@ function handleChatFile(event) {
     $("#chat-result").classList.add("is-hidden");
     $("#chat-file").value = "";
     $("#chat-camera-file").value = "";
-  })) {
+  }, "Screenshot chat berhasil diunggah")) {
     selectedChatFile = file;
     $("#chat-analyze").disabled = false;
     $("#chat-result").classList.add("is-hidden");

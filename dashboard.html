@@ -30,7 +30,7 @@
             </span>
           </label>
           <button class="profile" id="profile-open" type="button" aria-label="Buka manajemen profil" aria-haspopup="dialog">
-            <img src="assets/avatar.svg" alt="">
+            <img id="profile-avatar" src="assets/avatar.svg" alt="">
           </button>
         </div>
       </header>
@@ -170,14 +170,26 @@
           </div>
           <button class="dialog-close" type="button" id="profile-close" aria-label="Tutup profil">×</button>
         </div>
-        <p class="account-description" id="profile-mode">Perbarui informasi profil yang tersimpan di perangkat ini.</p>
-        <label class="account-field">Nama
-          <input id="profile-name" name="name" type="text" autocomplete="name" maxlength="48" required>
+        <p class="account-description" id="profile-mode">Perbarui username dan foto profilmu.</p>
+        <div class="avatar-editor">
+          <img id="profile-avatar-preview" src="assets/avatar.svg" alt="Pratinjau foto profil">
+          <div class="avatar-editor-copy">
+            <strong>Foto profil</strong>
+            <span>Ganti foto atau pilih gambar baru.</span>
+            <div class="avatar-editor-actions">
+              <label class="avatar-upload-button" for="profile-avatar-file">Pilih foto</label>
+              <button class="avatar-reset-button" id="profile-avatar-reset" type="button">Hapus foto</button>
+            </div>
+          </div>
+          <input class="avatar-file-input" id="profile-avatar-file" type="file" accept="image/*">
+        </div>
+        <label class="account-field">Username
+          <input id="profile-username" name="username" type="text" autocomplete="nickname" maxlength="32" placeholder="Username kamu" required>
         </label>
+        <small class="username-hint">2–32 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.</small>
         <label class="account-field">Email
-          <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="120" required>
+          <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="Opsional">
         </label>
-        <p class="account-notice">Profil ini tersimpan di browser perangkat ini. Belum terhubung ke layanan akun/server.</p>
         <p class="account-status" id="profile-status" role="status" aria-live="polite"></p>
         <button class="account-submit" type="submit">Simpan Profil</button>
         <div class="account-dialog-actions">
@@ -186,6 +198,7 @@
         </div>
       </form>
     </dialog>
+    <script defer src="js/ui.js"></script>
     <script defer src="js/auth.js"></script>
   </body>
 </html>

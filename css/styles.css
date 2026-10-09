@@ -254,6 +254,15 @@ main { padding-bottom: 128px; }
 .scan-button svg { width: 16px; height: 16px; color: #72aeff; }
 .scan-button:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(40, 120, 255, .22); }
 .scan-button:active { transform: translateY(-1px) scale(.95); }
+.app:not(:has(#theme-toggle:checked)) .scan-button { color: #fff; background: linear-gradient(120deg,#32bdf5,#1767f2); box-shadow: 0 9px 24px rgba(31,126,239,.3), inset 0 1px 0 #ffffff55; }
+.app:not(:has(#theme-toggle:checked)) .scan-button::before { background: linear-gradient(135deg,#9ee9ff,#77b8ff); }
+.app:not(:has(#theme-toggle:checked)) .scan-button svg { color: #fff; }
+.app:not(:has(#theme-toggle:checked)) .scan-button:hover { box-shadow: 0 14px 30px rgba(31,126,239,.42); }
+.app:not(:has(#theme-toggle:checked)) .hero-card { border-color: #d7e8f8; color: #10243d; background: radial-gradient(120% 140% at 0% 0%,#e5f4ff 0%,transparent 58%),linear-gradient(135deg,#ffffff 0%,#f4f9ff 58%,#eaf6ff 100%); }
+.app:not(:has(#theme-toggle:checked)) .hero-glow { background: radial-gradient(circle,#38a8f32b,transparent 70%); }
+.app:not(:has(#theme-toggle:checked)) .hero-card .ai-label { border-color: #cfe2f3; color: #31506e; background: #ffffffb8; }
+.app:not(:has(#theme-toggle:checked)) .hero-card .ai-label svg { color: #1676de; }
+.app:not(:has(#theme-toggle:checked)) .hero-card p { color: #52667d; }
 
 .section-block { display: flex; flex-direction: column; gap: 10px; }
 .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; }

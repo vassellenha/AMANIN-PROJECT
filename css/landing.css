@@ -1,4 +1,11 @@
-html:has(body.landing-body) { min-width: 0; scroll-behavior: smooth; }
+html:has(body.landing-body) {
+  min-width: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html:has(body.landing-body)::-webkit-scrollbar { display: none; }
 
 .landing-body {
   min-width: 0;

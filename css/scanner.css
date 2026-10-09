@@ -6,6 +6,7 @@
 .back-link svg { width: 16px; height: 16px; }
 .scanner-intro { display: grid; gap: 7px; }
 .scanner-kicker { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); font-size: 9px; font-weight: 700; letter-spacing: .8px; }
+.scanner-kicker svg { width: 14px; height: 14px; }
 .scanner-intro h1 { margin: 0; font: 700 23px/1.3 "Plus Jakarta Sans",sans-serif; letter-spacing: -.6px; }
 .scanner-intro p { margin: 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
 .scan-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 4px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface-soft); }
@@ -49,6 +50,7 @@
 .result-indicator { flex: 0 0 28px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; color: #087a57; background: #dff8ed; font-size: 15px; font-weight: 800; }
 .result-indicator[data-level="caution"] { color: #975900; background: #fff0cb; }
 .result-indicator[data-level="danger"] { color: #bd1d37; background: #ffe1e7; }
+.result-indicator svg { width: 16px; height: 16px; }
 .result-heading strong { font: 700 11px "Plus Jakarta Sans",sans-serif; }
 .result-heading small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 9px; }
 .result-message { margin: 0; color: var(--text-muted); font-size: 10px; line-height: 1.55; overflow-wrap: anywhere; }

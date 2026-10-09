@@ -29,7 +29,7 @@ $("#qr-analyze").addEventListener("click", () => {
   if (selectedQrFile) scanQrFile(selectedQrFile);
 });
 
-function setMode(mode, updateHash = true) {
+function setMode(mode, updateUrl = true) {
   const nextMode = mode === "qr" ? "qr" : "chat";
   for (const tab of tabs) {
     const selected = tab.dataset.mode === nextMode;
@@ -40,8 +40,11 @@ function setMode(mode, updateHash = true) {
   for (const [key, panel] of Object.entries(panels)) {
     panel.classList.toggle("is-hidden", key !== nextMode);
   }
-  if (updateHash && window.location.hash !== `#${nextMode}`) {
-    history.replaceState(null, "", `#${nextMode}`);
+  if (updateUrl) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("mode", nextMode);
+    url.hash = "";
+    history.replaceState(null, "", url);
   }
   if (nextMode !== "qr") stopCamera();
 }
@@ -178,7 +181,12 @@ function renderResult(container, { title, subtitle, message, findings = [], leve
   indicator.className = "result-indicator";
   indicator.dataset.level = level;
   indicator.setAttribute("aria-hidden", "true");
-  indicator.textContent = level === "danger" ? "!" : level === "caution" ? "!" : "✓";
+  const indicatorIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  indicatorIcon.setAttribute("viewBox", "0 0 24 24");
+  const indicatorPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  indicatorPath.setAttribute("d", level === "safe" ? "m5 12 4 4L19 6" : "M12 7v6m0 4h.01");
+  indicatorIcon.append(indicatorPath);
+  indicator.append(indicatorIcon);
   const headingText = document.createElement("span");
   const titleElement = document.createElement("strong");
   titleElement.textContent = title;
@@ -608,5 +616,10 @@ for (const tab of tabs) {
   });
 }
 
-window.addEventListener("hashchange", () => setMode(window.location.hash.slice(1), false));
-setMode(window.location.hash.slice(1), false);
+function getInitialMode() {
+  const requestedMode = new URLSearchParams(window.location.search).get("mode");
+  return requestedMode ?? window.location.hash.slice(1);
+}
+
+window.addEventListener("hashchange", () => setMode(getInitialMode(), false));
+setMode(getInitialMode(), false);

@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/auth.css">
   </head>
   <body>
     <div class="app">
@@ -28,9 +29,9 @@
               <span class="switch-knob"></span>
             </span>
           </label>
-          <a class="profile" href="#profil" aria-label="Buka profil Rizky">
+          <button class="profile" id="profile-open" type="button" aria-label="Buka manajemen profil" aria-haspopup="dialog">
             <img src="assets/avatar.svg" alt="">
-          </a>
+          </button>
         </div>
       </header>
 
@@ -38,7 +39,7 @@
         <div class="page-content">
           <section class="welcome" aria-labelledby="welcome-title">
             <div class="welcome-copy">
-              <h1 id="welcome-title">Halo, Rizky</h1>
+              <h1 id="welcome-title">Halo, Tamu</h1>
               <p>Lindungi transaksi &amp; interaksi digitalmu hari ini.</p>
             </div>
             <span class="shield-badge" aria-label="Perlindungan aktif">
@@ -157,8 +158,34 @@
         <a class="nav-item" href="#pemeriksaan"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="M12 8v4m0 3h.01"/></svg><span>Waspada</span><i class="nav-dot"></i></a>
         <a class="nav-item scan-nav" href="scan.html?mode=qr" aria-label="Cek Risiko"><span class="scan-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span><span>Cek Risiko</span></a>
         <a class="nav-item" id="riwayat" href="#pemeriksaan"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg><span>Riwayat</span></a>
-        <a class="nav-item" id="profil" href="#beranda"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span>Profil</span></a>
+        <a class="nav-item" id="profil" href="#profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span>Profil</span></a>
       </nav>
     </div>
+    <dialog class="account-dialog" id="profile-dialog" aria-labelledby="profile-title">
+      <form class="account-form" id="profile-form">
+        <div class="account-dialog-heading">
+          <div>
+            <span class="account-kicker">AKUN AMANIN</span>
+            <h2 id="profile-title">Manajemen Profil</h2>
+          </div>
+          <button class="dialog-close" type="button" id="profile-close" aria-label="Tutup profil">×</button>
+        </div>
+        <p class="account-description" id="profile-mode">Perbarui informasi profil yang tersimpan di perangkat ini.</p>
+        <label class="account-field">Nama
+          <input id="profile-name" name="name" type="text" autocomplete="name" maxlength="48" required>
+        </label>
+        <label class="account-field">Email
+          <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="120" required>
+        </label>
+        <p class="account-notice">Profil ini tersimpan di browser perangkat ini. Belum terhubung ke layanan akun/server.</p>
+        <p class="account-status" id="profile-status" role="status" aria-live="polite"></p>
+        <button class="account-submit" type="submit">Simpan Profil</button>
+        <div class="account-dialog-actions">
+          <a class="account-text-link is-hidden" id="profile-signin" href="login.html">Masuk dengan profil</a>
+          <button class="account-logout" id="logout-button" type="button">Keluar ke Landing Page</button>
+        </div>
+      </form>
+    </dialog>
+    <script defer src="js/auth.js"></script>
   </body>
 </html>

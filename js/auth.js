@@ -3,7 +3,8 @@
 (() => {
   const PROFILE_KEY = "amanin_profile";
   const SESSION_KEY = "amanin_session";
-  const page = window.location.pathname.split("/").pop();
+  const isDashboardPage = Boolean(document.querySelector("#profile-dialog"));
+  const isScanPage = Boolean(document.querySelector(".scanner-app"));
   const loginForm = document.querySelector("#login-form");
   const guestButton = document.querySelector("#guest-button");
   const profileForm = document.querySelector("#profile-form");
@@ -164,7 +165,7 @@
     });
   }
 
-  if (page === "dashboard.html") {
+  if (isDashboardPage) {
     const session = getSession();
     if (!session) {
       window.location.replace("login.html?next=dashboard.html");
@@ -195,8 +196,19 @@
     }
 
     function closeProfile() {
-      dialog.close();
       if (window.location.hash === "#profil") history.replaceState(null, "", window.location.pathname);
+      if (!dialog.open || dialog.classList.contains("is-closing")) return;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReducedMotion) {
+        dialog.close();
+        return;
+      }
+      dialog.classList.add("is-closing");
+      dialog.addEventListener("animationend", function finish() {
+        dialog.removeEventListener("animationend", finish);
+        dialog.classList.remove("is-closing");
+        dialog.close();
+      });
     }
 
     selectedAvatar = activeProfile.avatar;
@@ -250,7 +262,10 @@
       showStatus("");
     }
 
-    dialog?.addEventListener("cancel", discardProfileEdits);
+    dialog?.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeProfile();
+    });
     dialog?.addEventListener("close", discardProfileEdits);
 
     profileForm?.addEventListener("submit", (event) => {
@@ -295,7 +310,7 @@
     });
   }
 
-  if (page === "scan.html") {
+  if (isScanPage) {
     const session = getSession();
     if (!session && !startSession("guest")) return;
     const profileImage = document.querySelector(".profile img");

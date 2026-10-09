@@ -17,10 +17,11 @@
   <body>
     <div class="app scanner-app">
       <input class="theme-checkbox" type="checkbox" id="theme-toggle">
+      <script>try{if(localStorage.getItem("amanin_theme")==="dark")document.getElementById("theme-toggle").checked=true;}catch(e){}</script>
       <header class="topbar">
         <a class="brand" href="dashboard.html" aria-label="AMANIN, kembali ke beranda">
           <span class="brand-logo-frame"><img class="brand-logo" src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></span>
-          <span class="brand-copy"><small><i></i> Cek Risiko</small></span>
+          <span class="brand-copy"><small>Cek Risiko</small></span>
         </a>
         <div class="topbar-actions">
           <label class="theme-toggle" for="theme-toggle" title="Mode gelap">
@@ -92,7 +93,7 @@
             <section class="conversation-check" aria-labelledby="conversation-title">
               <div class="panel-heading">
                 <span class="panel-icon chat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span>
-                <span><h2 id="conversation-title">Input teks percakapan</h2><p>Tempel pesan yang mencurigakan untuk memeriksa pola scam.</p></span>
+                <span><h2 id="conversation-title">Input teks percakapan</h2><p id="conversation-subtitle">Tempel pesan yang mencurigakan untuk memeriksa pola scam.</p></span>
               </div>
               <label class="visually-hidden" for="chat-text">Teks percakapan yang ingin diperiksa</label>
               <textarea class="conversation-input" id="chat-text" maxlength="2000" placeholder='Tempel pesan di sini... Contoh: "Akun Anda akan diblokir. Verifikasi sekarang di https://bit.ly/..."' spellcheck="false"></textarea>
@@ -146,9 +147,64 @@
         </div>
       </main>
     </div>
+    <section class="analysis-overlay is-hidden" id="analysis-loading" role="status" aria-live="polite" aria-label="AMANIN sedang menganalisis">
+      <div class="analysis-loader">
+        <div class="analysis-orbit" aria-hidden="true">
+          <span class="orbit-ring orbit-ring-outer"></span>
+          <span class="orbit-ring orbit-ring-inner"></span>
+          <span class="orbit-core"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="orbit-spark orbit-spark-one"></span>
+          <span class="orbit-spark orbit-spark-two"></span>
+        </div>
+        <span class="analysis-loader-kicker"><i></i> PEMERIKSAAN AMANIN</span>
+        <h2>Memeriksa dengan teliti<span class="loading-dots"><i>.</i><i>.</i><i>.</i></span></h2>
+        <p id="analysis-loading-message">Menganalisis pola risiko secara lokal di perangkatmu.</p>
+        <div class="analysis-progress" aria-hidden="true"><span></span></div>
+        <span class="analysis-loader-privacy"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg> Data kamu tetap di perangkat</span>
+      </div>
+    </section>
+    <section class="analysis-overlay is-hidden" id="analysis-screen" role="dialog" aria-modal="true" aria-labelledby="analysis-screen-title">
+      <header class="analysis-topbar">
+        <button class="analysis-back" id="analysis-back" type="button" aria-label="Tutup hasil dan kembali ke pemeriksaan"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <span class="analysis-header-copy"><strong id="analysis-screen-title">Hasil Analisis</strong><small><i></i> Analisis selesai</small></span>
+        <span class="analysis-brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      </header>
+      <div class="analysis-content">
+        <section class="risk-summary" id="risk-summary" data-level="safe">
+          <span class="risk-summary-glow" aria-hidden="true"></span>
+          <div class="risk-gauge" id="risk-gauge" aria-label="Skor indikasi risiko">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="risk-gauge-track" cx="60" cy="60" r="49"/><circle class="risk-gauge-value" id="risk-gauge-value" cx="60" cy="60" r="49"/></svg>
+            <span><strong id="risk-score">12</strong><small id="risk-score-label">SKOR RISIKO</small></span>
+          </div>
+          <span class="risk-level-pill" id="risk-level-pill">Risiko rendah</span>
+          <h2 id="risk-result-title">Tidak ada pola umum terdeteksi</h2>
+          <p id="risk-result-message"></p>
+          <span class="risk-score-note" id="risk-score-note">Skor berbasis pola, bukan jaminan keamanan</span>
+        </section>
+        <section class="analysis-source-card is-hidden" id="analysis-source-card">
+          <span class="analysis-section-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8m-8 4h6"/></svg></span>
+          <span><strong id="analysis-source-title">Konten diperiksa</strong><span class="analysis-source-text" id="analysis-source-text"></span></span>
+        </section>
+        <section class="analysis-explanation">
+          <div class="analysis-section-heading"><span class="analysis-section-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg></span><h3>Kenapa hasilnya begini?</h3></div>
+          <p id="analysis-explanation-text"></p>
+        </section>
+        <section class="analysis-findings-section">
+          <div class="analysis-findings-heading"><h3 id="analysis-findings-title">Indikator pemeriksaan</h3><span id="analysis-findings-count">0 ditemukan</span></div>
+          <ul class="analysis-findings" id="analysis-findings"></ul>
+        </section>
+        <section class="analysis-safety-card">
+          <span class="analysis-section-icon"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span><strong id="analysis-advice-title">Langkah aman</strong><span id="analysis-advice-text"></span></span>
+        </section>
+        <p class="analysis-disclaimer">Analisis ini adalah indikasi awal berdasarkan pola yang dikenali. Verifikasi pengirim, situs, dan penerima melalui kanal resmi.</p>
+        <button class="analysis-done-button" id="analysis-done" type="button">Kembali ke pemeriksaan<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+      </div>
+    </section>
     <canvas class="processing-canvas" id="processing-canvas"></canvas>
     <script defer src="js/ui.js"></script>
     <script defer src="js/auth.js"></script>
+    <script defer src="js/history.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <script defer src="js/scanner.js"></script>
   </body>

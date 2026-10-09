@@ -5,6 +5,12 @@ const canvas = $("#processing-canvas");
 const context = canvas.getContext("2d", { willReadFrequently: true });
 const tabs = [...document.querySelectorAll(".scan-tab")];
 const panels = { qr: $("#panel-qr"), chat: $("#panel-chat") };
+const analysisLoading = $("#analysis-loading");
+const analysisScreen = $("#analysis-screen");
+const analysisLoadingMessage = $("#analysis-loading-message");
+const riskGaugeCircumference = 2 * Math.PI * 49;
+let analysisStartedAt = 0;
+let analysisReturnFocus = null;
 const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/bmp"]);
 const maxFileSize = 12 * 1024 * 1024;
 let cameraStream = null;
@@ -23,6 +29,104 @@ function setStatus(element, message, state = "") {
   element.textContent = message;
   if (state) element.dataset.state = state;
   else delete element.dataset.state;
+}
+
+function startAnalysis(message) {
+  analysisStartedAt = performance.now();
+  analysisReturnFocus = document.activeElement;
+  analysisLoadingMessage.textContent = message;
+  analysisScreen.classList.add("is-hidden");
+  analysisLoading.classList.remove("is-hidden");
+}
+
+function closeAnalysisScreen() {
+  analysisScreen.classList.add("is-hidden");
+  analysisReturnFocus?.focus?.({ preventScroll: true });
+}
+
+$("#analysis-back").addEventListener("click", closeAnalysisScreen);
+$("#analysis-done").addEventListener("click", closeAnalysisScreen);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !analysisScreen.classList.contains("is-hidden")) {
+    closeAnalysisScreen();
+  }
+});
+
+async function presentAnalysis({
+  level = "safe",
+  title,
+  message,
+  findings = [],
+  source = "",
+  sourceTitle = "Konten diperiksa",
+  score = null,
+  type = "chat",
+}) {
+  const remaining = Math.max(0, 1350 - (performance.now() - analysisStartedAt));
+  if (remaining) await new Promise((resolve) => window.setTimeout(resolve, remaining));
+
+  if (score !== null) {
+    window.AmaninHistory?.add({ type, level, score, title, source });
+  }
+
+  const safeFindings = findings.length ? findings : ["Tidak ditemukan indikator spesifik dari pola yang diperiksa."];
+  const summary = $("#risk-summary");
+  summary.dataset.level = level;
+  summary.toggleAttribute("data-unscored", score === null);
+  $("#risk-score").textContent = score === null ? "—" : String(score);
+  $("#risk-score-label").textContent = score === null ? "STATUS" : "SKOR RISIKO";
+  $("#risk-gauge").setAttribute("aria-label", score === null ? title : `Skor indikasi risiko ${score} dari 100`);
+  $("#risk-gauge-value").style.strokeDasharray = String(riskGaugeCircumference);
+  $("#risk-gauge-value").style.strokeDashoffset = String(riskGaugeCircumference * (1 - (score ?? 0) / 100));
+  $("#risk-level-pill").textContent = score === null
+    ? "Konten belum terbaca"
+    : level === "danger"
+      ? "Risiko tinggi · waspada"
+      : level === "caution"
+        ? "Perlu diperiksa"
+        : "Risiko rendah terdeteksi";
+  $("#risk-result-title").textContent = title;
+  $("#risk-result-message").textContent = score === null
+    ? "Konten belum bisa diberi skor. Coba periksa dengan gambar atau teks yang lebih jelas."
+    : level === "danger"
+      ? "Ditemukan beberapa sinyal kuat yang perlu kamu tangani dengan hati-hati."
+      : level === "caution"
+        ? "Ada pola yang sebaiknya diverifikasi sebelum kamu bertindak."
+        : "Tidak ditemukan pola risiko umum dalam pemeriksaan ini.";
+  $("#analysis-explanation-text").textContent = message;
+  $("#analysis-findings-title").textContent = `${safeFindings.length} indikator pemeriksaan`;
+  $("#analysis-findings-count").textContent = level === "danger" ? "Perlu diwaspadai" : level === "caution" ? "Cek kembali" : "Pola umum";
+
+  const sourceCard = $("#analysis-source-card");
+  sourceCard.classList.toggle("is-hidden", !source);
+  if (source) {
+    $("#analysis-source-title").textContent = sourceTitle;
+    $("#analysis-source-text").textContent = source.length > 360 ? `${source.slice(0, 360)}…` : source;
+  }
+
+  const findingsList = $("#analysis-findings");
+  findingsList.replaceChildren();
+  for (const finding of safeFindings) {
+    const item = document.createElement("li");
+    item.textContent = finding;
+    findingsList.append(item);
+  }
+
+  $("#analysis-advice-title").textContent = level === "danger" ? "Jangan lanjutkan dulu" : "Langkah aman";
+  $("#analysis-advice-text").textContent = level === "danger"
+    ? "Jangan klik tautan, kirim uang, atau bagikan OTP/PIN. Hubungi pihak terkait lewat aplikasi atau nomor resmi."
+    : level === "caution"
+      ? "Pastikan identitas pengirim dan tujuan secara terpisah melalui kanal resmi sebelum membayar atau membagikan data."
+      : "Tetap cek alamat situs dan identitas pengirim. Tidak ada pola yang terdeteksi bukan berarti pesan pasti aman.";
+
+  analysisLoading.classList.add("is-hidden");
+  analysisScreen.classList.remove("is-hidden");
+  analysisScreen.scrollTop = 0;
+  $("#analysis-back").focus({ preventScroll: true });
+}
+
+function hideAnalysisLoading() {
+  analysisLoading.classList.add("is-hidden");
 }
 
 $("#qr-analyze").addEventListener("click", () => {
@@ -214,7 +318,7 @@ $("#chat-paste").addEventListener("click", async () => {
   }
 });
 
-conversationAnalyzeButton.addEventListener("click", () => {
+conversationAnalyzeButton.addEventListener("click", async () => {
   const text = conversationInput.value.trim();
   if (!text) {
     setStatus(conversationStatus, "Masukkan teks percakapan terlebih dahulu.", "error");
@@ -222,6 +326,7 @@ conversationAnalyzeButton.addEventListener("click", () => {
   }
   conversationAnalyzeButton.disabled = true;
   setStatus(conversationStatus, "Menganalisis pola pesan di perangkat…", "working");
+  startAnalysis("Membaca isi pesan dan memeriksa tanda-tanda penipuan.");
   const assessment = analyzeText(text);
   const title = assessment.level === "danger"
     ? "Ada tanda risiko tinggi"
@@ -250,6 +355,18 @@ conversationAnalyzeButton.addEventListener("click", () => {
   }
   setStatus(conversationStatus, "Analisis selesai. Teks percakapan tidak keluar dari perangkat.");
   conversationAnalyzeButton.disabled = !conversationInput.value.trim();
+  await presentAnalysis({
+    level: assessment.level,
+    title,
+    message,
+    findings: assessment.findings.length
+      ? assessment.findings
+      : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
+    source: text,
+    sourceTitle: "Cuplikan percakapan",
+    score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
+    type: "chat",
+  });
 });
 
 function renderResult(container, { title, subtitle, message, findings = [], level = "safe", value = "" }) {
@@ -437,6 +554,7 @@ async function readQr(imageData) {
 async function scanQrFile(file) {
   if (qrBusy) return;
   qrBusy = true;
+  startAnalysis("Membaca QR dan memeriksa tujuan kontennya.");
   $("#qr-analyze").disabled = true;
   setStatus($("#qr-status"), "Membaca gambar dan mencari QR…", "working");
   $("#qr-result").classList.add("is-hidden");
@@ -452,6 +570,13 @@ async function scanQrFile(file) {
         level: "caution",
       });
       setStatus($("#qr-status"), "Tidak menemukan QR pada gambar.", "error");
+      await presentAnalysis({
+        level: "caution",
+        title: "QR belum ditemukan",
+        message: "Gambar sudah diperiksa, tetapi pola QR belum terbaca. Pastikan kode terlihat utuh, fokus, dan mendapat pencahayaan yang cukup.",
+        findings: ["Coba unggah gambar yang lebih jelas atau ambil foto dari jarak lebih dekat."],
+        score: null,
+      });
       return;
     }
     const payload = result.data;
@@ -467,6 +592,20 @@ async function scanQrFile(file) {
         value: payload.slice(0, 1000),
       });
       setStatus($("#qr-status"), "QR berhasil dibaca. Jangan buka otomatis; cek alamat di bawah.", "");
+      await presentAnalysis({
+        level: assessment.level,
+        title: assessment.level === "danger" ? "Tautan QR perlu diwaspadai" : assessment.level === "caution" ? "Periksa tujuan QR ini" : "QR berisi tautan",
+        message: assessment.findings.length
+          ? "Ditemukan pola yang perlu diperiksa sebelum membuka tautan."
+          : "Tidak ditemukan pola umum yang mencurigakan pada alamat. Ini bukan jaminan bahwa situs aman.",
+        findings: assessment.findings.length
+          ? assessment.findings
+          : ["Pastikan nama situs dan penerima benar sebelum memasukkan data atau melakukan pembayaran."],
+        source: payload,
+        sourceTitle: "Tautan yang dibaca dari QR",
+        score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
+        type: "qr",
+      });
     } else {
       renderResult($("#qr-result"), {
         title: "QR berhasil dibaca",
@@ -479,8 +618,21 @@ async function scanQrFile(file) {
         value: payload.slice(0, 1000),
       });
       setStatus($("#qr-status"), "QR berhasil dibaca di perangkat.", "");
+      await presentAnalysis({
+        level: "caution",
+        title: "QR berhasil dibaca",
+        message: /^(000201|https?:\/\/)/i.test(payload)
+          ? "QR tampaknya berisi format pembayaran. Pastikan nama merchant, nominal, dan penerima di aplikasi pembayaran sebelum menyetujui."
+          : "Periksa isi dan tujuan QR ini sebelum bertindak. QR non-tautan tidak otomatis berarti aman.",
+        findings: ["Pemindaian ini tidak memvalidasi identitas penerima atau status pembayaran."],
+        source: payload,
+        sourceTitle: "Konten QR",
+        score: 58,
+        type: "qr",
+      });
     }
   } catch (error) {
+    hideAnalysisLoading();
     setStatus($("#qr-status"), error.message || "Gambar QR tidak dapat diproses.", "error");
   } finally {
     qrBusy = false;
@@ -499,8 +651,10 @@ async function getOcrWorker() {
     logger: (progress) => {
       if (progress.status === "recognizing text" && progress.progress) {
         const percent = Math.round(progress.progress * 100);
+        analysisLoadingMessage.textContent = `Memindai teks pada gambar… ${percent}%`;
         setStatus($("#chat-status"), `Membaca teks screenshot… ${percent}%`, "working");
       } else if (progress.status === "loading language traineddata") {
+        analysisLoadingMessage.textContent = "Menyiapkan pembaca teks untuk gambar.";
         setStatus($("#chat-status"), "Menyiapkan pembaca teks Indonesia dan Inggris…", "working");
       }
     },
@@ -514,6 +668,7 @@ async function getOcrWorker() {
 async function analyzeChatImage() {
   if (!selectedChatFile || ocrBusy) return;
   ocrBusy = true;
+  startAnalysis("Membaca teks pada screenshot dan memeriksa pola risikonya.");
   $("#chat-analyze").disabled = true;
   $("#chat-result").classList.add("is-hidden");
   setStatus($("#chat-status"), "Menyiapkan pemeriksa teks di perangkat…", "working");
@@ -529,6 +684,13 @@ async function analyzeChatImage() {
         level: "caution",
       });
       setStatus($("#chat-status"), "Belum ada teks yang bisa dianalisis.", "error");
+      await presentAnalysis({
+        level: "caution",
+        title: "Teks belum terbaca",
+        message: "Screenshot sudah diproses di perangkat, tetapi teksnya belum cukup jelas untuk dianalisis.",
+        findings: ["Gunakan gambar yang lebih terang, teks lebih besar, dan tidak terpotong."],
+        score: null,
+      });
       return;
     }
     const assessment = analyzeText(text);
@@ -568,7 +730,18 @@ async function analyzeChatImage() {
     extracted.append(summary, content);
     $("#chat-result").append(extracted);
     setStatus($("#chat-status"), "Pemeriksaan selesai. Teks screenshot tidak keluar dari perangkat.", "");
+    await presentAnalysis({
+      level: assessment.level,
+      title,
+      message,
+      findings: assessment.findings.length ? assessment.findings : ["Tidak ditemukan kata pemicu atau tautan mencurigakan yang dikenali."],
+      source: text,
+      sourceTitle: "Teks yang terbaca dari screenshot",
+      score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
+      type: "screenshot",
+    });
   } catch (error) {
+    hideAnalysisLoading();
     setStatus($("#chat-status"), `Pemeriksaan gagal: ${error.message || "mesin OCR tidak dapat dijalankan."}`, "error");
   } finally {
     ocrBusy = false;
@@ -704,5 +877,75 @@ function getInitialMode() {
   return requestedMode ?? window.location.hash.slice(1);
 }
 
+const CHAT_CONTEXTS = {
+  chat: {
+    heading: "Input teks percakapan",
+    subtitle: "Tempel pesan yang mencurigakan untuk memeriksa pola scam.",
+    placeholder: 'Tempel pesan di sini... Contoh: "Akun Anda akan diblokir. Verifikasi sekarang di https://bit.ly/..."',
+    focus: "text",
+  },
+  link: {
+    heading: "Periksa tautan yang kamu terima",
+    subtitle: "Tempel link lengkap untuk memeriksa domain, pemendek tautan, dan pola phishing.",
+    placeholder: "Tempel tautan lengkap di sini... Contoh: https://promo-hadiah-resmi.com/klaim",
+    focus: "text",
+  },
+  rekening: {
+    heading: "Periksa nomor HP atau rekening",
+    subtitle: "Tempel nomor beserta pesan atau konteksnya agar polanya bisa diperiksa.",
+    placeholder: 'Tempel nomor HP/rekening beserta pesannya... Contoh: "Transfer ke 0812xxxxxxx a.n Budi, lalu kirim bukti ke saya."',
+    focus: "text",
+  },
+  pembayaran: {
+    heading: "Periksa detail pembayaran",
+    subtitle: "Tempel info Virtual Account, QRIS, atau e-Wallet sebelum kamu membayar.",
+    placeholder: 'Tempel detail pembayaran di sini... Contoh: "VA BCA 0912xxxxxxxx a.n Toko Aman, total Rp150.000."',
+    focus: "text",
+  },
+  screenshot: {
+    heading: "Input teks percakapan",
+    subtitle: "Tempel pesan yang mencurigakan untuk memeriksa pola scam.",
+    placeholder: 'Tempel pesan di sini... Contoh: "Akun Anda akan diblokir. Verifikasi sekarang di https://bit.ly/..."',
+    focus: "screenshot",
+  },
+};
+
+function getRequestedContext() {
+  const params = new URLSearchParams(window.location.search);
+  const explicit = params.get("context");
+  if (explicit && CHAT_CONTEXTS[explicit]) return explicit;
+  if (params.get("mode") === "link") return "link";
+  return "chat";
+}
+
+function applyChatContext(context) {
+  const config = CHAT_CONTEXTS[context] || CHAT_CONTEXTS.chat;
+  const headingEl = $("#conversation-title");
+  const subtitleEl = $("#conversation-subtitle");
+  if (headingEl) headingEl.textContent = config.heading;
+  if (subtitleEl) subtitleEl.textContent = config.subtitle;
+  if (conversationInput) conversationInput.placeholder = config.placeholder;
+  return config;
+}
+
+function focusChatTarget(target) {
+  window.requestAnimationFrame(() => {
+    if (target === "screenshot") {
+      const dropzone = $("#chat-dropzone");
+      dropzone?.scrollIntoView({ behavior: "smooth", block: "center" });
+      dropzone?.classList.add("quick-focus");
+      window.setTimeout(() => dropzone?.classList.remove("quick-focus"), 1600);
+    } else {
+      conversationInput?.focus({ preventScroll: false });
+    }
+  });
+}
+
 window.addEventListener("hashchange", () => setMode(getInitialMode(), false));
-setMode(getInitialMode(), false);
+const initialMode = getInitialMode();
+setMode(initialMode, false);
+if (initialMode !== "qr") {
+  const context = getRequestedContext();
+  const config = applyChatContext(context);
+  focusChatTarget(config.focus);
+}

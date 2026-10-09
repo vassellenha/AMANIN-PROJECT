@@ -40,6 +40,11 @@
 
   for (const toggle of document.querySelectorAll("#theme-toggle")) {
     toggle.addEventListener("change", () => {
+      try {
+        localStorage.setItem("amanin_theme", toggle.checked ? "dark" : "light");
+      } catch (error) {
+        console.error("Preferensi tema gagal disimpan:", error);
+      }
       showToast(toggle.checked ? "Mode gelap diaktifkan" : "Mode terang diaktifkan", "info", 1400);
     });
   }

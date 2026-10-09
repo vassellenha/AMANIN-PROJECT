@@ -78,8 +78,11 @@
   background: #fff;
   box-shadow: 0 28px 90px #07182b42;
 }
+.account-dialog { transform-origin: center center; }
 .account-dialog::backdrop { background: #07182b80; backdrop-filter: blur(4px); }
-.account-dialog[open] { animation: account-dialog-in .18s ease-out both; }
+.account-dialog[open] { animation: account-dialog-in .46s cubic-bezier(.22,1,.36,1) both; }
+.account-dialog[open]::backdrop { animation: account-backdrop-in .3s ease-out both; }
+.account-dialog.is-closing { animation: account-dialog-out .24s cubic-bezier(.4,0,1,1) forwards; }
 .account-dialog .account-form { gap: 13px; padding: 25px; }
 .account-dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .account-dialog-heading h2 { margin: 6px 0 0; font-size: 24px; }
@@ -138,8 +141,17 @@ body:has(#theme-toggle:checked) .amanin-toast { border-color: #ffffff2c; color: 
 .amanin-toast[data-type="info"] .toast-progress { background: linear-gradient(90deg, #67a9ff, #a283ff); }
 
 @keyframes account-dialog-in {
-  from { opacity: 0; transform: translateY(8px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  0% { opacity: 0; transform: perspective(1400px) translateY(50px) rotateX(-55deg) scale(.82); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: perspective(1400px) translateY(0) rotateX(0deg) scale(1); }
+}
+@keyframes account-dialog-out {
+  0% { opacity: 1; transform: perspective(1400px) translateY(0) rotateX(0deg) scale(1); }
+  100% { opacity: 0; transform: perspective(1400px) translateY(26px) rotateX(38deg) scale(.86); }
+}
+@keyframes account-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes toast-icon-pop {
   from { opacity: 0; transform: scale(.65) rotate(-10deg); }
@@ -154,6 +166,6 @@ body:has(#theme-toggle:checked) .amanin-toast { border-color: #ffffff2c; color: 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .account-dialog[open] { animation: none; }
+  .account-dialog[open], .account-dialog.is-closing, .account-dialog[open]::backdrop { animation: none; }
   .amanin-toast, .amanin-toast.is-visible, .amanin-toast.is-leaving, .toast-icon, .toast-progress.is-running { animation: none; transition: none; }
 }

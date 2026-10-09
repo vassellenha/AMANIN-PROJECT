@@ -44,25 +44,39 @@ html:has(body.landing-body)::-webkit-scrollbar { display: none; }
 .landing-shell main { padding-bottom: 0; }
 
 .landing-header {
-  position: absolute;
+  position: sticky;
+  top: 0;
   z-index: 5;
-  inset: 0 0 auto;
   width: 100%;
   min-height: 84px;
+  margin-bottom: -84px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   padding: 0 clamp(24px, 6vw, 88px);
-  border-bottom: 1px solid rgba(255, 255, 255, .12);
+  border-bottom: 1px solid transparent;
   color: #fff;
+  transition: color .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
 .landing-brand { display: inline-flex; align-items: center; gap: 13px; }
-.landing-brand .brand-logo-frame { display: inline-flex; align-items: center; }
-.landing-brand .brand-logo { width: 126px; height: auto; display: block; filter: brightness(0) invert(1); }
+.landing-brand .brand-logo-frame { width: 126px; display: inline-flex; align-items: center; overflow: hidden; transition: width .32s cubic-bezier(.2,.75,.25,1); }
+.landing-brand .brand-logo { width: 126px; max-width: none; height: auto; display: block; filter: brightness(0) invert(1); transition: filter .25s ease; }
 .landing-brand .brand-copy small { display: inline-flex; align-items: center; gap: 7px; color: #d2def0; font-size: 10px; }
 .landing-brand .brand-copy i { width: 7px; height: 7px; border-radius: 50%; background: #54d6ad; box-shadow: 0 0 0 4px #54d6ad20; }
+.landing-header.is-glass {
+  border-bottom-color: rgba(16, 34, 61, .08);
+  color: #10223d;
+  background: rgba(246, 249, 253, .78);
+  box-shadow: 0 8px 24px rgba(16, 34, 61, .06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.landing-header.is-glass .brand-logo { filter: none; }
+.landing-header.is-glass .login-link { border-color: rgba(16, 34, 61, .22); color: #10223d; }
+.landing-header.is-glass .login-link:hover { border-color: #1266ed; background: rgba(18, 102, 237, .07); }
+.landing-header.is-brand-compact .brand-logo-frame { width: 22px; }
 .header-actions { display: flex; align-items: center; gap: 16px; }
 .login-link {
   min-height: 42px;
@@ -375,8 +389,10 @@ html:has(body.landing-body)::-webkit-scrollbar { display: none; }
 }
 
 @media (max-width: 760px) {
-  .landing-header { min-height: 68px; padding: 0 20px; }
+  .landing-header { min-height: 68px; margin-bottom: -68px; padding: 0 20px; }
+  .landing-brand .brand-logo-frame { width: 105px; }
   .landing-brand .brand-logo { width: 105px; }
+  .landing-header.is-brand-compact .brand-logo-frame { width: 18px; }
   .landing-brand .brand-copy { display: none; }
   .header-actions { gap: 9px; }
   .login-link { min-height: 36px; gap: 6px; padding: 0 12px; font-size: 9px; }

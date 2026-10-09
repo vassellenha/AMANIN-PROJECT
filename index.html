@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="css/landing.css">
   </head>
   <body class="landing-body">
+    <div class="amanin-splash" id="amanin-splash">
+      <script>try{if(localStorage.getItem("amanin_visited"))document.getElementById("amanin-splash").remove();}catch(e){}</script>
+      <div class="amanin-splash-inner">
+        <span class="amanin-splash-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <strong class="amanin-splash-title">AMANIN</strong>
+        <span class="amanin-splash-status" id="amanin-splash-status" data-i18n="splash.status">Menyiapkan ruang aman digitalmu…</span>
+        <div class="amanin-splash-bar"><span></span></div>
+      </div>
+    </div>
     <div class="landing-shell">
       <header class="landing-header">
         <div class="landing-header-start">
@@ -65,39 +74,41 @@
         </section>
 
         <section class="testimonial-section" aria-label="Testimoni pengguna AMANIN">
-          <span class="testimonial-label" data-i18n="landing.testimonial.label">❤️ Dipercaya ribuan pengguna di Indonesia</span>
-          <div class="testimonial-marquee" id="testimonial-marquee">
-            <div class="testimonial-track" id="testimonial-track">
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#6e62ff">BS</span>
-                <span class="testimonial-meta"><strong>Budi Santoso</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q1">“Hampir klik link resi paket palsu, untung sempat dicek dulu pakai AMANIN.”</p>
-              </article>
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#0d9d79">DA</span>
-                <span class="testimonial-meta"><strong>Dewi Anggraini</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q2">“QRIS tempelan di parkiran ternyata nomor rekening beda nama. AMANIN langsung kasih peringatan.”</p>
-              </article>
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#dc2b4e">RH</span>
-                <span class="testimonial-meta"><strong>Rizky Hidayat</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q3">“Dapat chat katanya menang undian, saya tempel ke AMANIN, langsung ketahuan pola phishing-nya.”</p>
-              </article>
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#1676de">SM</span>
-                <span class="testimonial-meta"><strong>Siti Maharani</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q4">“Simpel banget, tinggal screenshot chat mencurigakan terus langsung dicek. Nggak perlu daftar akun.”</p>
-              </article>
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#975900">AF</span>
-                <span class="testimonial-meta"><strong>Agus Firmansyah</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q5">“Ada yang kirim file APK ngaku dari kurir. AMANIN kasih tau itu modus yang sering dipakai penipu.”</p>
-              </article>
-              <article class="testimonial-card">
-                <span class="testimonial-avatar" style="--avatar-color:#6e62ff">NP</span>
-                <span class="testimonial-meta"><strong>Nadia Putri</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
-                <p data-i18n="landing.testimonial.q6">“Setiap mau transfer ke rekening baru, saya cek dulu polanya di AMANIN. Jadi lebih tenang.”</p>
-              </article>
+          <div class="testimonial-row">
+            <span class="testimonial-label" data-i18n="landing.testimonial.label">❤️ Dipercaya ribuan pengguna di Indonesia</span>
+            <div class="testimonial-marquee" id="testimonial-marquee">
+              <div class="testimonial-track" id="testimonial-track">
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t1.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Budi Santoso</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q1">“Hampir klik link resi paket palsu, untung sempat dicek dulu pakai AMANIN.”</p>
+                </article>
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t2.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Dewi Anggraini</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q2">“QRIS tempelan di parkiran ternyata nomor rekening beda nama. AMANIN langsung kasih peringatan.”</p>
+                </article>
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t3.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Rizky Hidayat</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q3">“Dapat chat katanya menang undian, saya tempel ke AMANIN, langsung ketahuan pola phishing-nya.”</p>
+                </article>
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t5.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Siti Maharani</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q4">“Simpel banget, tinggal screenshot chat mencurigakan terus langsung dicek. Nggak perlu daftar akun.”</p>
+                </article>
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t4.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Agus Firmansyah</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q5">“Ada yang kirim file APK ngaku dari kurir. AMANIN kasih tau itu modus yang sering dipakai penipu.”</p>
+                </article>
+                <article class="testimonial-card">
+                  <img class="testimonial-avatar" src="assets/testimonials/t6.jpg" alt="" width="38" height="38">
+                  <span class="testimonial-meta"><strong>Nadia Putri</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                  <p data-i18n="landing.testimonial.q6">“Setiap mau transfer ke rekening baru, saya cek dulu polanya di AMANIN. Jadi lebih tenang.”</p>
+                </article>
+              </div>
             </div>
           </div>
         </section>
@@ -226,13 +237,6 @@
         <small class="copyright" data-i18n-html="landing.footer.copyright">© 2026 AMANIN. Hak Cipta Dilindungi.</small>
       </footer>
     </div>
-    <aside class="mobile-sticky-cta" aria-label="Mulai pemeriksaan">
-      <a class="landing-primary" href="scan.html?mode=qr">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-        <span data-i18n="landing.hero.cta">Scan Cepat Tanpa Login</span>
-        <svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
-      </a>
-    </aside>
     <script defer src="js/i18n.js"></script>
     <script src="js/landing.js" defer></script>
   </body>

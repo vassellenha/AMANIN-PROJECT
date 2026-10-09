@@ -93,9 +93,10 @@
 .account-submit, .account-guest { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0 16px; border: 0; border-radius: 13px; font: 800 11px "Inter", sans-serif; cursor: pointer; transition: transform .2s ease, background .2s ease; }
 .account-submit { color: #fff; background: linear-gradient(135deg, #0752e7, #3887ff); box-shadow: 0 9px 22px #0752e72b; }
 .account-submit:hover, .account-guest:hover { transform: translateY(-1px); }
-.account-divider { display: flex; align-items: center; gap: 12px; margin: 19px 0; color: #8190a3; font-size: 10px; }
+.account-divider { display: flex; align-items: center; gap: 12px; margin: 19px 0; color: #8190a3; font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .account-divider::before, .account-divider::after { height: 1px; flex: 1; content: ""; background: #e5ebf2; }
-.account-guest { width: 100%; border: 1px solid #d9e2ed; color: #18314e; background: #fff; }
+.account-guest { width: 100%; gap: 8px; border: 1px solid #d9e2ed; color: #18314e; background: #fff; }
+.account-guest svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .account-back-link { display: block; width: fit-content; margin: 20px auto 0; color: #5e7087; font-size: 11px; font-weight: 600; }
 .account-back-link:hover, .account-text-link:hover { color: #176cf1; }
 

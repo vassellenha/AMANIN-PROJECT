@@ -1,4 +1,18 @@
 (() => {
+  const splash = document.querySelector("#amanin-splash");
+  if (splash) {
+    window.setTimeout(() => {
+      splash.classList.add("is-leaving");
+      try {
+        localStorage.setItem("amanin_visited", "1");
+      } catch (error) {
+        console.error("Status kunjungan AMANIN gagal disimpan:", error);
+      }
+      splash.addEventListener("transitionend", () => splash.remove(), { once: true });
+      window.setTimeout(() => splash.remove(), 900);
+    }, 1300);
+  }
+
   const header = document.querySelector(".landing-header");
   if (!header) return;
 
@@ -64,32 +78,27 @@
       { key: "landing.chat3", cls: "is-danger" },
       { key: "landing.chat4", cls: "is-safe" },
     ];
-    const MAX_VISIBLE = 3;
+    const MAX_VISIBLE = 2;
     let index = 0;
     let bubbles = [];
+    let timer = 0;
 
     function t(key) {
       return window.AmaninI18n?.t(key) ?? key;
     }
 
-    function updateDim() {
-      const visible = bubbles.filter((b) => b.classList.contains("is-visible"));
-      visible.forEach((bubble, position) => {
-        bubble.classList.toggle("is-dim", visible.length - position > MAX_VISIBLE);
-      });
+    function retireOldest() {
+      if (bubbles.length <= MAX_VISIBLE) return;
+      const oldest = bubbles.shift();
+      oldest.classList.remove("is-visible");
+      oldest.classList.add("is-leaving");
+      oldest.addEventListener("transitionend", () => oldest.remove(), { once: true });
+      window.setTimeout(() => oldest.remove(), 700);
     }
 
     function revealNext() {
-      if (index >= steps.length) {
-        window.setTimeout(() => {
-          for (const bubble of bubbles) bubble.remove();
-          bubbles = [];
-          index = 0;
-          window.setTimeout(revealNext, 500);
-        }, 2200);
-        return;
-      }
-      const step = steps[index];
+      const step = steps[index % steps.length];
+      index += 1;
       const bubble = document.createElement("p");
       bubble.className = `chat-bubble${step.cls ? ` ${step.cls}` : ""}`;
       bubble.dataset.i18n = step.key;
@@ -97,12 +106,19 @@
       chatStack.append(bubble);
       bubbles.push(bubble);
       window.requestAnimationFrame(() => {
-        bubble.classList.add("is-visible");
-        updateDim();
+        window.requestAnimationFrame(() => bubble.classList.add("is-visible"));
       });
-      index += 1;
-      window.setTimeout(revealNext, 1900);
+      retireOldest();
+      timer = window.setTimeout(revealNext, 2200);
     }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        window.clearTimeout(timer);
+      } else if (!timer) {
+        timer = window.setTimeout(revealNext, 400);
+      }
+    });
 
     revealNext();
   }

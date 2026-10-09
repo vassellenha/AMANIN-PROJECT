@@ -13,6 +13,8 @@ window.AmaninI18n = (() => {
       "nav.masuk": "Masuk",
       "nav.kembali": "Kembali ke Landing Page",
 
+      "splash.status": "Menyiapkan ruang aman digitalmu…",
+
       "landing.title": "AMANIN — Lindungi Diri dari Penipuan Digital",
       "landing.hero.eyebrow": "CEK DULU. BARU PERCAYA.",
       "landing.hero.title.html": "Jangan asal klik.<br><span>Pastikan dulu.</span>",
@@ -510,6 +512,8 @@ window.AmaninI18n = (() => {
       "nav.profil": "Profile",
       "nav.masuk": "Sign In",
       "nav.kembali": "Back to Landing Page",
+
+      "splash.status": "Setting up your safe digital space…",
 
       "landing.title": "AMANIN — Protect Yourself from Digital Scams",
       "landing.hero.eyebrow": "CHECK FIRST. THEN TRUST.",
@@ -1074,14 +1078,18 @@ window.AmaninI18n = (() => {
       menu.style.removeProperty("top");
       menu.style.removeProperty("left");
       menu.style.removeProperty("right");
-      menu.closest(".lang-switch")?.querySelector(".lang-switch-button")?.setAttribute("aria-expanded", "false");
+      menu.style.removeProperty("min-width");
+      const root = menu.closest(".lang-switch");
+      root?.classList.remove("is-open");
+      root?.querySelector(".lang-switch-button")?.setAttribute("aria-expanded", "false");
     }
   }
 
   function positionMenu(button, menu) {
     const rect = button.getBoundingClientRect();
     const alignRight = rect.left + 140 > window.innerWidth;
-    menu.style.top = `${Math.round(rect.bottom + 6)}px`;
+    menu.style.top = `${Math.round(rect.bottom)}px`;
+    menu.style.minWidth = `${Math.max(118, Math.round(rect.width))}px`;
     if (alignRight) {
       menu.style.right = `${Math.round(window.innerWidth - rect.right)}px`;
       menu.style.left = "auto";
@@ -1103,6 +1111,7 @@ window.AmaninI18n = (() => {
         closeAllMenus();
         if (willOpen) positionMenu(button, menu);
         menu.classList.toggle("is-hidden", !willOpen);
+        root.classList.toggle("is-open", willOpen);
         button.setAttribute("aria-expanded", String(willOpen));
       });
       for (const option of menu.querySelectorAll("[data-lang]")) {
@@ -1113,7 +1122,7 @@ window.AmaninI18n = (() => {
       }
     }
     document.addEventListener("click", () => closeAllMenus());
-    window.addEventListener("scroll", () => closeAllMenus(), { passive: true, capture: true });
+    window.addEventListener("scroll", () => closeAllMenus(), { passive: true });
     window.addEventListener("resize", () => closeAllMenus());
   }
 

@@ -20,9 +20,19 @@
       <header class="topbar">
         <a class="brand" href="dashboard.html" aria-label="AMANIN, kembali ke beranda">
           <span class="brand-logo-frame"><img class="brand-logo" src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></span>
-          <span class="brand-copy"><small>Riwayat</small></span>
+          <span class="brand-copy"><small data-i18n="riwayat.brand.sub">Riwayat</small></span>
         </a>
         <div class="topbar-actions">
+          <div class="lang-switch">
+            <button class="lang-switch-button" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span data-lang-current>ID</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="lang-switch-menu is-hidden" role="listbox">
+              <button type="button" data-lang="id" role="option" data-i18n="lang.id">Indonesia</button>
+              <button type="button" data-lang="en" role="option" data-i18n="lang.en">English</button>
+            </div>
+          </div>
           <a class="landing-return" href="index.html" title="Kembali ke Landing Page" aria-label="Kembali ke Landing Page">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
           </a>
@@ -33,6 +43,10 @@
               <span class="switch-knob"></span>
             </span>
           </label>
+          <a class="topbar-login is-hidden" id="topbar-login" href="login.html?next=dashboard.html">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-i18n="nav.masuk">Masuk</span>
+          </a>
           <a class="profile" href="dashboard.html#profil" aria-label="Buka profil"><img src="assets/avatar.svg" alt=""></a>
         </div>
       </header>
@@ -41,8 +55,8 @@
         <div class="page-content">
           <section class="section-block" aria-labelledby="riwayat-title">
             <div class="section-heading">
-              <h2 id="riwayat-title">Riwayat Pemeriksaan</h2>
-              <button class="history-clear" id="history-clear" type="button">Hapus Semua</button>
+              <h2 id="riwayat-title" data-i18n="riwayat.heading">Riwayat Pemeriksaan</h2>
+              <button class="history-clear" id="history-clear" type="button" data-i18n="riwayat.clear">Hapus Semua</button>
             </div>
             <div class="recent-list" id="riwayat-list">
               <p class="history-empty">Memuat riwayat…</p>
@@ -52,36 +66,40 @@
       </main>
 
       <nav class="bottom-nav" aria-label="Navigasi utama">
-        <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3V10Z"/></svg><span>Beranda</span></a>
-        <a class="nav-item" href="berita.html"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v14H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 8h10M7 12h10m-10 4h6"/></svg><span>Berita</span></a>
-        <a class="nav-item scan-nav" href="scan.html?mode=qr" aria-label="Cek Risiko"><span class="scan-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span><span>Cek Risiko</span></a>
-        <a class="nav-item selected" href="riwayat.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg><span>Riwayat</span></a>
-        <a class="nav-item" href="dashboard.html#profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span>Profil</span></a>
+        <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3V10Z"/></svg><span data-i18n="nav.beranda">Beranda</span></a>
+        <a class="nav-item" href="berita.html"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v14H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 8h10M7 12h10m-10 4h6"/></svg><span data-i18n="nav.berita">Berita</span></a>
+        <a class="nav-item scan-nav" href="scan.html?mode=qr" aria-label="Cek Risiko"><span class="scan-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span><span data-i18n="nav.cekrisiko">Cek Risiko</span></a>
+        <a class="nav-item selected" href="riwayat.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg><span data-i18n="nav.riwayat">Riwayat</span></a>
+        <a class="nav-item" href="dashboard.html#profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span data-i18n="nav.profil">Profil</span></a>
       </nav>
     </div>
+    <script defer src="js/i18n.js"></script>
     <script defer src="js/ui.js"></script>
+    <script defer src="js/auth.js"></script>
     <script defer src="js/history.js"></script>
     <script defer>
       document.addEventListener("DOMContentLoaded", () => {
         const list = document.querySelector("#riwayat-list");
         const clearButton = document.querySelector("#history-clear");
+        const t = (key) => window.AmaninI18n?.t(key) ?? key;
 
         function render() {
           const entries = window.AmaninHistory.getAll();
           window.AmaninHistory.renderList(list, entries, {
-            emptyMessage: "Belum ada pemeriksaan. Mulai scan untuk melihat riwayatnya di sini.",
+            emptyMessage: t("riwayat.empty"),
           });
           if (clearButton) clearButton.disabled = entries.length === 0;
         }
 
         render();
+        document.addEventListener("amanin:langchange", render);
 
         clearButton?.addEventListener("click", () => {
           if (clearButton.disabled) return;
-          if (!window.confirm("Hapus semua riwayat pemeriksaan? Tindakan ini tidak dapat dibatalkan.")) return;
+          if (!window.confirm(t("riwayat.confirmclear"))) return;
           window.AmaninHistory.clear();
           render();
-          window.AmaninToast?.show("Riwayat berhasil dihapus", "info");
+          window.AmaninToast?.show(t("riwayat.cleared"), "info");
         });
       });
     </script>

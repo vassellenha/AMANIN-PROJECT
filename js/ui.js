@@ -45,7 +45,8 @@
       } catch (error) {
         console.error("Preferensi tema gagal disimpan:", error);
       }
-      showToast(toggle.checked ? "Mode gelap diaktifkan" : "Mode terang diaktifkan", "info", 1400);
+      const key = toggle.checked ? "toast.darkon" : "toast.darkoff";
+      showToast(window.AmaninI18n?.t(key) ?? key, "info", 1400);
     });
   }
 })();

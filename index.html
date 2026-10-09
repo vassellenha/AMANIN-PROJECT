@@ -15,13 +15,25 @@
   <body class="landing-body">
     <div class="landing-shell">
       <header class="landing-header">
-        <a class="landing-brand" href="#beranda" aria-label="AMANIN, halaman utama">
-          <span class="brand-logo-frame"><img class="brand-logo" src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></span>
-        </a>
+        <div class="landing-header-start">
+          <a class="landing-brand" href="#beranda" aria-label="AMANIN, halaman utama">
+            <span class="brand-logo-frame"><img class="brand-logo" src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></span>
+          </a>
+          <div class="lang-switch">
+            <button class="lang-switch-button" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span data-lang-current>ID</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="lang-switch-menu is-hidden" role="listbox">
+              <button type="button" data-lang="id" role="option" data-i18n="lang.id">Indonesia</button>
+              <button type="button" data-lang="en" role="option" data-i18n="lang.en">English</button>
+            </div>
+          </div>
+        </div>
         <nav class="header-actions" aria-label="Navigasi utama">
           <a class="login-link" href="login.html" aria-label="Masuk ke AMANIN">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg>
-            <span>Masuk</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-i18n="nav.masuk">Masuk</span>
           </a>
         </nav>
       </header>
@@ -29,67 +41,95 @@
       <main id="beranda">
         <section class="landing-hero" aria-labelledby="hero-title">
           <div class="hero-copy">
-              <span class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg> CEK DULU. BARU PERCAYA.</span>
-              <h1 id="hero-title">Jangan asal klik.<br><span>Pastikan dulu.</span></h1>
-              <p class="hero-description">Lindungi diri dari penipuan digital. Periksa chat, tautan, screenshot, dan QR sebelum kamu percaya atau membayar.</p>
+              <span class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg> <span data-i18n="landing.hero.eyebrow">CEK DULU. BARU PERCAYA.</span></span>
+              <h1 id="hero-title" data-i18n-html="landing.hero.title.html">Jangan asal klik.<br><span>Pastikan dulu.</span></h1>
+              <p class="hero-description" data-i18n="landing.hero.desc">Lindungi diri dari penipuan digital. Periksa chat, tautan, screenshot, dan QR sebelum kamu percaya atau membayar.</p>
             <div class="hero-actions">
               <a class="landing-primary" href="scan.html?mode=qr">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-                Scan Cepat Tanpa Login
+                <span data-i18n="landing.hero.cta">Scan Cepat Tanpa Login</span>
                 <svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
               </a>
             </div>
             <div class="hero-assurance">
-              <span class="assurance-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Gratis digunakan</span>
+              <span class="assurance-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span data-i18n="landing.hero.assurance1">Gratis digunakan</span></span>
               <span class="assurance-separator" aria-hidden="true">·</span>
-              <span class="assurance-item">Tanpa perlu login</span>
+              <span class="assurance-item" data-i18n="landing.hero.assurance2">Tanpa perlu login</span>
             </div>
           </div>
           <div class="hero-visual" aria-hidden="true">
-            <div class="message-card">
-              <div class="message-card-header">
-                <span class="message-card-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span>
-                <span><strong>Contoh pemeriksaan</strong><small>Pesan yang kamu terima</small></span>
-                <span class="message-card-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              </div>
-              <p>“Paket tertahan. Konfirmasi alamatmu lewat tautan ini.”</p>
-              <span class="message-link">paket-cepat-verifikasi.com</span>
-              <div class="message-warning">
-                <svg viewBox="0 0 24 24"><path d="M12 3 21 19H3L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg>
-                <span><strong>Tautan mencurigakan</strong><small>Periksa sebelum dibuka</small></span>
-              </div>
+            <div class="chat-demo" id="chat-demo">
+              <div class="chat-demo-stack" id="chat-demo-stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="testimonial-section" aria-label="Testimoni pengguna AMANIN">
+          <span class="testimonial-label" data-i18n="landing.testimonial.label">❤️ Dipercaya ribuan pengguna di Indonesia</span>
+          <div class="testimonial-marquee" id="testimonial-marquee">
+            <div class="testimonial-track" id="testimonial-track">
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#6e62ff">BS</span>
+                <span class="testimonial-meta"><strong>Budi Santoso</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q1">“Hampir klik link resi paket palsu, untung sempat dicek dulu pakai AMANIN.”</p>
+              </article>
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#0d9d79">DA</span>
+                <span class="testimonial-meta"><strong>Dewi Anggraini</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q2">“QRIS tempelan di parkiran ternyata nomor rekening beda nama. AMANIN langsung kasih peringatan.”</p>
+              </article>
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#dc2b4e">RH</span>
+                <span class="testimonial-meta"><strong>Rizky Hidayat</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q3">“Dapat chat katanya menang undian, saya tempel ke AMANIN, langsung ketahuan pola phishing-nya.”</p>
+              </article>
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#1676de">SM</span>
+                <span class="testimonial-meta"><strong>Siti Maharani</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q4">“Simpel banget, tinggal screenshot chat mencurigakan terus langsung dicek. Nggak perlu daftar akun.”</p>
+              </article>
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#975900">AF</span>
+                <span class="testimonial-meta"><strong>Agus Firmansyah</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q5">“Ada yang kirim file APK ngaku dari kurir. AMANIN kasih tau itu modus yang sering dipakai penipu.”</p>
+              </article>
+              <article class="testimonial-card">
+                <span class="testimonial-avatar" style="--avatar-color:#6e62ff">NP</span>
+                <span class="testimonial-meta"><strong>Nadia Putri</strong><small data-i18n="landing.testimonial.role">Pengguna AMANIN</small></span>
+                <p data-i18n="landing.testimonial.q6">“Setiap mau transfer ke rekening baru, saya cek dulu polanya di AMANIN. Jadi lebih tenang.”</p>
+              </article>
             </div>
           </div>
         </section>
 
         <section class="steps-section" aria-labelledby="steps-title">
           <div class="steps-intro">
-            <span class="eyebrow">NGGAK PERLU AKUN</span>
-            <h2 id="steps-title">Mulai lebih aman<br> dalam 3 langkah.</h2>
-            <p>Periksa hal yang terasa mencurigakan sebelum kamu klik, balas, atau bayar.</p>
+            <span class="eyebrow" data-i18n="landing.steps.eyebrow">NGGAK PERLU AKUN</span>
+            <h2 id="steps-title" data-i18n-html="landing.steps.title.html">Mulai lebih aman<br> dalam 3 langkah.</h2>
+            <p data-i18n="landing.steps.desc">Periksa hal yang terasa mencurigakan sebelum kamu klik, balas, atau bayar.</p>
           </div>
           <div class="steps-list">
             <article class="step-card step-start">
               <div class="step-visual start-visual">
                 <span class="step-grid-glow"></span>
-                <a class="step-demo-button" href="scan.html?mode=qr">MULAI SCAN GRATIS</a>
+                <a class="step-demo-button" href="scan.html?mode=qr" data-i18n="landing.steps.demo">MULAI SCAN GRATIS</a>
                 <svg class="step-pointer" viewBox="0 0 32 38" aria-hidden="true"><path d="M3 2v27l7-7 5 12 5-2-5-12h10L3 2Z" fill="#10223d" stroke="#fff" stroke-linejoin="round" stroke-width="2"/></svg>
                 <span class="step-click-ring" aria-hidden="true"></span>
               </div>
               <div class="step-copy">
-                <span class="step-number">LANGKAH 01</span>
-                <h3>Mulai tanpa daftar</h3>
-                <p>Buka pemeriksaan gratis langsung dari browser. Nggak perlu bikin akun atau memasukkan data pribadi.</p>
+                <span class="step-number" data-i18n="landing.step1.number">LANGKAH 01</span>
+                <h3 data-i18n="landing.step1.title">Mulai tanpa daftar</h3>
+                <p data-i18n="landing.step1.desc">Buka pemeriksaan gratis langsung dari browser. Nggak perlu bikin akun atau memasukkan data pribadi.</p>
               </div>
             </article>
 
             <article class="step-card step-check">
               <div class="step-visual check-visual" aria-hidden="true">
                 <div class="check-window">
-                  <div class="check-window-top"><i></i><i></i><i></i><span>Contoh pesan masuk</span></div>
+                  <div class="check-window-top"><i></i><i></i><i></i><span data-i18n="landing.step2.card.title">Contoh pesan masuk</span></div>
                   <div class="check-message">
-                    <span class="message-sender">Pesan tidak dikenal</span>
-                    <p>“Akun kamu akan diblokir. Verifikasi sekarang lewat tautan ini.”</p>
+                    <span class="message-sender" data-i18n="landing.step2.card.sender">Pesan tidak dikenal</span>
+                    <p data-i18n="landing.step2.card.msg">“Akun kamu akan diblokir. Verifikasi sekarang lewat tautan ini.”</p>
                     <span class="message-link">verifikasi-akun-cepat.com</span>
                   </div>
                   <div class="scan-sweep"></div>
@@ -98,9 +138,9 @@
                 </div>
               </div>
               <div class="step-copy">
-                <span class="step-number">LANGKAH 02</span>
-                <h3>Pilih yang bikin ragu</h3>
-                <p>Tempel isi chat atau periksa tautan dan screenshot yang terasa janggal.</p>
+                <span class="step-number" data-i18n="landing.step2.number">LANGKAH 02</span>
+                <h3 data-i18n="landing.step2.title">Pilih yang bikin ragu</h3>
+                <p data-i18n="landing.step2.desc">Tempel isi chat atau periksa tautan dan screenshot yang terasa janggal.</p>
               </div>
             </article>
 
@@ -110,16 +150,16 @@
                 <div class="result-orbit result-orbit-two"></div>
                 <div class="result-card">
                   <span class="result-icon"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 4.8-3.1 8-8 10-4.9-2-8-5.2-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-                  <span class="result-label">HASIL PEMERIKSAAN</span>
-                  <strong>Waspada tautan</strong>
-                  <p>Jangan masukkan kata sandi atau kode OTP di halaman ini.</p>
-                  <span class="result-status"><i></i> Risiko terdeteksi</span>
+                  <span class="result-label" data-i18n="landing.step3.card.label">HASIL PEMERIKSAAN</span>
+                  <strong data-i18n="landing.step3.card.title">Waspada tautan</strong>
+                  <p data-i18n="landing.step3.card.desc">Jangan masukkan kata sandi atau kode OTP di halaman ini.</p>
+                  <span class="result-status"><i></i> <span data-i18n="landing.step3.card.status">Risiko terdeteksi</span></span>
                 </div>
               </div>
               <div class="step-copy">
-                <span class="step-number">LANGKAH 03</span>
-                <h3>Pahami risikonya</h3>
-                <p>Lihat indikasi dan saran langkah aman sebelum kamu mengambil keputusan.</p>
+                <span class="step-number" data-i18n="landing.step3.number">LANGKAH 03</span>
+                <h3 data-i18n="landing.step3.title">Pahami risikonya</h3>
+                <p data-i18n="landing.step3.desc">Lihat indikasi dan saran langkah aman sebelum kamu mengambil keputusan.</p>
               </div>
             </article>
           </div>
@@ -127,30 +167,30 @@
 
         <section class="features-section" id="fitur" aria-labelledby="features-title">
           <div class="section-intro">
-            <span class="eyebrow">SATU TEMPAT, LEBIH WASPADA</span>
-            <h2 id="features-title">Kenali risikonya sebelum terlambat.</h2>
-            <p>Empat cara praktis untuk memeriksa hal yang sering kamu temui setiap hari.</p>
+            <span class="eyebrow" data-i18n="landing.features.eyebrow">SATU TEMPAT, LEBIH WASPADA</span>
+            <h2 id="features-title" data-i18n="landing.features.title">Kenali risikonya sebelum terlambat.</h2>
+            <p data-i18n="landing.features.desc">Empat cara praktis untuk memeriksa hal yang sering kamu temui setiap hari.</p>
           </div>
           <div class="features-grid">
             <a class="feature-card feature-chat" href="scan.html?mode=chat">
               <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span>
               <span class="feature-arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
-              <strong>Scan Chat</strong><small>Periksa pesan WhatsApp, SMS, dan Telegram yang terasa mencurigakan.</small>
+              <strong data-i18n="landing.feature1.title">Scan Chat</strong><small data-i18n="landing.feature1.desc">Periksa pesan WhatsApp, SMS, dan Telegram yang terasa mencurigakan.</small>
             </a>
             <a class="feature-card feature-image" href="scan.html?mode=chat&amp;context=screenshot">
               <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><circle cx="9" cy="10" r="2"/><path d="m4 16 5-4 3 3 2-2 6 4"/></svg></span>
               <span class="feature-arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
-              <strong>Screenshot Scanner</strong><small>Cek bukti transfer, struk, atau DM sebelum menindaklanjuti.</small>
+              <strong data-i18n="landing.feature2.title">Screenshot Scanner</strong><small data-i18n="landing.feature2.desc">Cek bukti transfer, struk, atau DM sebelum menindaklanjuti.</small>
             </a>
             <a class="feature-card feature-link" href="scan.html?mode=chat&amp;context=link">
               <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.2-1.2"/></svg></span>
               <span class="feature-arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
-              <strong>Tautan / Link</strong><small>Periksa alamat web, phishing, dan tautan pendek yang menyamarkan tujuan.</small>
+              <strong data-i18n="landing.feature3.title">Tautan / Link</strong><small data-i18n="landing.feature3.desc">Periksa alamat web, phishing, dan tautan pendek yang menyamarkan tujuan.</small>
             </a>
             <a class="feature-card feature-qr" href="scan.html?mode=qr">
               <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span>
               <span class="feature-arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
-              <strong>QR Code Guard</strong><small>Kenali tujuan QR atau QRIS sebelum membuka tautan atau membayar.</small>
+              <strong data-i18n="landing.feature4.title">QR Code Guard</strong><small data-i18n="landing.feature4.desc">Kenali tujuan QR atau QRIS sebelum membuka tautan atau membayar.</small>
             </a>
           </div>
         </section>
@@ -158,41 +198,42 @@
         <section class="radar-section" aria-labelledby="radar-title">
           <div class="radar-emblem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9-9-9 9-9Z"/><path d="M12 8v5m0 3h.01"/></svg></div>
           <div class="radar-copy">
-            <span class="radar-label"><i></i> RADAR TERKINI <small>PERINGATAN KEAMANAN</small></span>
-            <h2 id="radar-title">Waspada hari ini</h2>
-            <p>Marak phishing QRIS tempelan di SPBU &amp; masjid. Periksa nama penerima dan tujuan QR sebelum membayar.</p>
+            <span class="radar-label"><i></i> <span data-i18n="landing.radar.label">RADAR TERKINI</span> <small data-i18n="landing.radar.sublabel">PERINGATAN KEAMANAN</small></span>
+            <h2 id="radar-title" data-i18n="landing.radar.title">Waspada hari ini</h2>
+            <p data-i18n="landing.radar.desc">Marak phishing QRIS tempelan di SPBU &amp; masjid. Periksa nama penerima dan tujuan QR sebelum membayar.</p>
           </div>
           <a class="radar-link" href="scan.html?mode=qr" aria-label="Periksa QR sekarang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </section>
 
         <section class="closing-cta" aria-labelledby="closing-title">
           <span class="closing-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          <h2 id="closing-title">Ragu? Periksa dulu.</h2>
-          <p>Mulai pemeriksaan langsung dari perangkatmu.</p>
-          <a class="landing-primary" href="scan.html?mode=qr">Mulai Scan <svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+          <h2 id="closing-title" data-i18n="landing.closing.title">Ragu? Periksa dulu.</h2>
+          <p data-i18n="landing.closing.desc">Mulai pemeriksaan langsung dari perangkatmu.</p>
+          <a class="landing-primary" href="scan.html?mode=qr"><span data-i18n="landing.closing.cta">Mulai Scan</span> <svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </section>
       </main>
 
       <footer class="landing-footer">
         <a class="footer-brand" href="#beranda"><img src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></a>
-        <p>Lebih waspada, lebih aman beraktivitas digital.</p>
+        <p data-i18n="landing.footer.tagline">Lebih waspada, lebih aman beraktivitas digital.</p>
         <nav class="footer-links" aria-label="Informasi">
-          <a href="#privasi">Kebijakan Privasi</a><a href="#syarat">Syarat &amp; Ketentuan</a><a href="mailto:halo@amanin.id">Hubungi Kami</a>
+          <a href="#privasi" data-i18n="landing.footer.privasi">Kebijakan Privasi</a><a href="#syarat" data-i18n="landing.footer.syarat">Syarat &amp; Ketentuan</a><a href="mailto:halo@amanin.id" data-i18n="landing.footer.kontak">Hubungi Kami</a>
         </nav>
         <div class="legal-details">
-          <details id="privasi" open><summary>Kebijakan Privasi</summary><p>Gambar dan teks yang kamu pilih untuk diperiksa diproses di browser. Jangan unggah atau bagikan informasi rahasia seperti PIN dan kode OTP.</p></details>
-          <details id="syarat" open><summary>Syarat &amp; Ketentuan</summary><p>Hasil pemeriksaan merupakan indikasi awal, bukan jaminan keamanan atau pengganti verifikasi melalui kanal resmi.</p></details>
+          <details id="privasi" open><summary data-i18n="landing.footer.privasi">Kebijakan Privasi</summary><p data-i18n="landing.footer.privasi.body">Gambar dan teks yang kamu pilih untuk diperiksa diproses di browser. Jangan unggah atau bagikan informasi rahasia seperti PIN dan kode OTP.</p></details>
+          <details id="syarat" open><summary data-i18n="landing.footer.syarat">Syarat &amp; Ketentuan</summary><p data-i18n="landing.footer.syarat.body">Hasil pemeriksaan merupakan indikasi awal, bukan jaminan keamanan atau pengganti verifikasi melalui kanal resmi.</p></details>
         </div>
-        <small class="copyright">© 2026 AMANIN. Hak Cipta Dilindungi.</small>
+        <small class="copyright" data-i18n-html="landing.footer.copyright">© 2026 AMANIN. Hak Cipta Dilindungi.</small>
       </footer>
     </div>
     <aside class="mobile-sticky-cta" aria-label="Mulai pemeriksaan">
       <a class="landing-primary" href="scan.html?mode=qr">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-        Scan Cepat Tanpa Login
+        <span data-i18n="landing.hero.cta">Scan Cepat Tanpa Login</span>
         <svg class="button-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
       </a>
     </aside>
+    <script defer src="js/i18n.js"></script>
     <script src="js/landing.js" defer></script>
   </body>
 </html>

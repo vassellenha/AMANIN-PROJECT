@@ -12,6 +12,8 @@
   let selectedAvatar = "";
   const statusElements = [...document.querySelectorAll(".account-status")];
 
+  const t = (key) => window.AmaninI18n?.t(key) ?? key;
+
   function showStatus(message, state = "error") {
     for (const element of statusElements) {
       element.textContent = message;
@@ -25,7 +27,7 @@
       value = localStorage.getItem(key);
     } catch (error) {
       console.error(`Data ${key} tidak dapat diakses:`, error);
-      showStatus("Browser tidak mengizinkan akses penyimpanan lokal. Periksa pengaturan privasi browser.");
+      showStatus(t("auth.err.storageread"));
       return null;
     }
     if (!value) return null;
@@ -48,7 +50,7 @@
       return true;
     } catch (error) {
       console.error(`Data ${key} gagal disimpan:`, error);
-      showStatus("Data tidak dapat disimpan di browser ini. Periksa pengaturan penyimpanan browser.", "error");
+      showStatus(t("auth.err.storagewrite"), "error");
       return false;
     }
   }
@@ -70,10 +72,10 @@
 
   function makeAvatar(file) {
     if (!file || !file.type.startsWith("image/")) {
-      return Promise.reject(new Error("Pilih file gambar untuk foto profil."));
+      return Promise.reject(new Error(t("auth.err.avatartype")));
     }
     if (file.size > 8 * 1024 * 1024) {
-      return Promise.reject(new Error("Ukuran foto maksimal 8 MB."));
+      return Promise.reject(new Error(t("auth.err.avatarsize")));
     }
     return new Promise((resolve, reject) => {
       const objectUrl = URL.createObjectURL(file);
@@ -88,19 +90,19 @@
         canvas.height = 256;
         const context = canvas.getContext("2d");
         if (!context) {
-          reject(new Error("Foto tidak bisa diproses di browser ini."));
+          reject(new Error(t("auth.err.avatarcanvas")));
           return;
         }
         context.drawImage(image, sourceX, sourceY, side, side, 0, 0, 256, 256);
         try {
           resolve(canvas.toDataURL("image/jpeg", 0.8));
         } catch (error) {
-          reject(new Error(`Foto gagal diproses: ${error.message}`));
+          reject(new Error(`${t("auth.err.avatarencode")} ${error.message}`));
         }
       };
       image.onerror = () => {
         URL.revokeObjectURL(objectUrl);
-        reject(new Error("Foto tidak dapat dibuka. Pilih gambar lain."));
+        reject(new Error(t("auth.err.avatardecode")));
       };
       image.src = objectUrl;
     });
@@ -120,11 +122,11 @@
   }
 
   function setImageLabels(username) {
-    const label = username ? `Foto profil ${username}` : "Foto profil";
+    const label = username ? t("profile.alt.named").replace("{name}", username) : t("profile.alt.default");
     const avatarImage = document.querySelector("#profile-avatar");
     const previewImage = document.querySelector("#profile-avatar-preview");
     if (avatarImage) avatarImage.alt = label;
-    if (previewImage) previewImage.alt = `Pratinjau ${label.toLowerCase()}`;
+    if (previewImage) previewImage.alt = `${t("profile.alt.preview")}`;
   }
 
   function getDestination() {
@@ -152,7 +154,7 @@
         avatar: profile.avatar,
       };
       if (!nextProfile.username || !nextProfile.email) {
-        showStatus("Isi username dan email dengan benar untuk melanjutkan.");
+        showStatus(t("auth.err.loginrequired"));
         return;
       }
       if (!writeStored(PROFILE_KEY, nextProfile) || !startSession("user")) return;
@@ -174,11 +176,16 @@
 
     const profile = getProfile();
     let activeProfile = session.mode === "user" ? profile : { username: "", email: "", avatar: "" };
-    const userName = session.mode === "user" && profile.username ? profile.username : "Tamu";
     const welcome = document.querySelector("#welcome-title");
-    if (welcome) welcome.textContent = `Halo, ${userName}`;
+
+    function renderWelcome() {
+      const userName = activeProfile.username ? activeProfile.username : t("common.guest");
+      if (welcome) welcome.textContent = `${t("common.greeting")}, ${userName}`;
+      setImageLabels(activeProfile.username ? userName : "");
+    }
+
+    renderWelcome();
     displayAvatar(activeProfile.avatar);
-    setImageLabels(userName === "Tamu" ? "" : userName);
 
     const dialog = document.querySelector("#profile-dialog");
     const profileUsername = document.querySelector("#profile-username");
@@ -189,6 +196,11 @@
     const openButton = document.querySelector("#profile-open");
     const closeButton = document.querySelector("#profile-close");
     const logoutButton = document.querySelector("#logout-button");
+
+    function renderProfileMode() {
+      if (!profileMode) return;
+      profileMode.textContent = session.mode === "guest" ? t("profile.desc.guest") : t("profile.desc.user");
+    }
 
     function openProfile() {
       if (!dialog.open) dialog.showModal();
@@ -215,11 +227,14 @@
     if (profileUsername && profileEmail) {
       profileUsername.value = activeProfile.username;
       profileEmail.value = activeProfile.email;
-      profileMode.textContent = session.mode === "guest"
-        ? "Atur username dan foto profil untuk personalisasi AMANIN."
-        : "Ganti username dan foto profilmu.";
+      renderProfileMode();
       signIn.classList.toggle("is-hidden", session.mode !== "guest");
     }
+
+    document.addEventListener("amanin:langchange", () => {
+      renderWelcome();
+      renderProfileMode();
+    });
 
     openButton?.addEventListener("click", openProfile);
     document.querySelector("#profil")?.addEventListener("click", (event) => {
@@ -240,7 +255,7 @@
         selectedAvatar = await makeAvatar(file);
         displayAvatarPreview(selectedAvatar);
         showStatus("");
-        window.AmaninToast?.show("Foto profil siap digunakan");
+        window.AmaninToast?.show(t("toast.avatarready"));
       } catch (error) {
         showStatus(error.message);
       }
@@ -250,7 +265,7 @@
       selectedAvatar = "";
       displayAvatarPreview("");
       showStatus("");
-      window.AmaninToast?.show("Foto profil akan dihapus setelah disimpan", "info");
+      window.AmaninToast?.show(t("toast.avatarremove"), "info");
     });
 
     function discardProfileEdits() {
@@ -277,26 +292,26 @@
         avatar: selectedAvatar,
       };
       if (!nextProfile.username) {
-        showStatus("Username tidak boleh kosong.");
+        showStatus(t("auth.err.usernameempty"));
         return;
       }
       if (!/^[\p{L}\p{N}._-]{2,32}$/u.test(nextProfile.username)) {
-        showStatus("Username harus 2–32 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.");
+        showStatus(t("auth.err.usernameformat"));
         return;
       }
       if (nextProfile.email && !profileEmail.validity.valid) {
-        showStatus("Format email belum benar.");
+        showStatus(t("auth.err.emailformat"));
         return;
       }
       if (!writeStored(PROFILE_KEY, nextProfile) || !startSession("user")) return;
+      session.mode = "user";
       activeProfile = nextProfile;
       displayAvatar(nextProfile.avatar);
-      if (welcome) welcome.textContent = `Halo, ${nextProfile.username}`;
-      setImageLabels(nextProfile.username);
-      profileMode.textContent = "Ganti username dan foto profilmu.";
+      renderWelcome();
+      renderProfileMode();
       signIn.classList.add("is-hidden");
       closeProfile();
-      window.AmaninToast?.show("Profil berhasil diperbarui");
+      window.AmaninToast?.show(t("toast.profileupdated"));
     });
 
     logoutButton?.addEventListener("click", () => {
@@ -305,7 +320,7 @@
         window.location.assign("index.html");
       } catch (error) {
         console.error("Sesi AMANIN gagal dihapus:", error);
-        showStatus("Tidak dapat menghapus sesi. Periksa pengaturan penyimpanan browser.");
+        showStatus(t("auth.err.sessionclear"));
       }
     });
   }
@@ -317,7 +332,18 @@
     const profile = getProfile();
     if (profileImage && session?.mode === "user" && profile.avatar) {
       profileImage.src = profile.avatar;
-      profileImage.alt = profile.username ? `Foto profil ${profile.username}` : "Foto profil";
+      profileImage.alt = profile.username ? t("profile.alt.named").replace("{name}", profile.username) : t("profile.alt.default");
     }
   }
+
+  function applyTopbarAuthState() {
+    const loginLink = document.querySelector("#topbar-login");
+    const profileLink = document.querySelector(".profile, #profile-open");
+    if (!loginLink && !profileLink) return;
+    const session = getSession();
+    const isGuest = !session || session.mode === "guest";
+    loginLink?.classList.toggle("is-hidden", !isGuest);
+    profileLink?.classList.toggle("is-hidden", isGuest);
+  }
+  applyTopbarAuthState();
 })();

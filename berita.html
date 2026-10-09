@@ -21,9 +21,19 @@
       <header class="topbar">
         <a class="brand" href="dashboard.html" aria-label="AMANIN, kembali ke beranda">
           <span class="brand-logo-frame"><img class="brand-logo" src="assets/amanin-wordmark-transparent.png" alt="AMANIN"></span>
-          <span class="brand-copy"><small>Berita Siber</small></span>
+          <span class="brand-copy"><small data-i18n="berita.brand.sub">Berita Siber</small></span>
         </a>
         <div class="topbar-actions">
+          <div class="lang-switch">
+            <button class="lang-switch-button" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span data-lang-current>ID</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="lang-switch-menu is-hidden" role="listbox">
+              <button type="button" data-lang="id" role="option" data-i18n="lang.id">Indonesia</button>
+              <button type="button" data-lang="en" role="option" data-i18n="lang.en">English</button>
+            </div>
+          </div>
           <label class="theme-toggle" for="theme-toggle" title="Mode gelap">
             <span class="theme-switch" aria-hidden="true">
               <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
@@ -31,6 +41,10 @@
               <span class="switch-knob"></span>
             </span>
           </label>
+          <a class="topbar-login is-hidden" id="topbar-login" href="login.html?next=dashboard.html">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-i18n="nav.masuk">Masuk</span>
+          </a>
           <a class="profile" href="dashboard.html#profil" aria-label="Buka profil"><img src="assets/avatar.svg" alt=""></a>
         </div>
       </header>
@@ -39,109 +53,111 @@
         <div class="news-content">
           <a class="back-link" href="dashboard.html">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h11"/></svg>
-            <span>Beranda</span>
+            <span data-i18n="scan.back">Beranda</span>
           </a>
 
           <section class="news-intro" aria-labelledby="news-page-title">
-            <span class="news-live-label"><i></i> CYBER INTELLIGENCE</span>
-            <h1 id="news-page-title">Radar Scam &amp; Siber</h1>
-            <p>Kenali modus penipuan digital, pahami risikonya, dan ambil langkah aman sebelum bertindak.</p>
+            <span class="news-live-label"><i></i> <span data-i18n="berita.intro.kicker">CYBER INTELLIGENCE</span></span>
+            <h1 id="news-page-title" data-i18n="berita.intro.title">Radar Scam &amp; Siber</h1>
+            <p data-i18n="berita.intro.desc">Kenali modus penipuan digital, pahami risikonya, dan ambil langkah aman sebelum bertindak.</p>
           </section>
 
           <section class="news-briefing" aria-label="Ringkasan kategori berita">
             <div class="briefing-heading">
               <span class="briefing-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.9 7.8-7 10-4.1-2.2-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-              <span><strong>Wawasan keamanan digital</strong><small>Modus umum dan panduan untuk melindungi diri</small></span>
+              <span><strong data-i18n="berita.briefing.title">Wawasan keamanan digital</strong><small data-i18n="berita.briefing.desc">Modus umum dan panduan untuk melindungi diri</small></span>
             </div>
-            <div class="briefing-tags"><span>Phishing</span><span>Fraud</span><span>Privasi</span></div>
+            <div class="briefing-tags"><span data-i18n="berita.tag1">Phishing</span><span data-i18n="berita.tag2">Fraud</span><span data-i18n="berita.tag3">Privasi</span></div>
           </section>
 
           <section class="news-feed" aria-labelledby="news-feed-title">
             <div class="news-feed-heading">
-              <div><span class="news-kicker">TETAP TERINFORMASI</span><h2 id="news-feed-title">Modus &amp; Panduan</h2></div>
-              <span class="news-feed-note">Pilihan AMANIN</span>
+              <div><span class="news-kicker" data-i18n="berita.feed.kicker">TETAP TERINFORMASI</span><h2 id="news-feed-title" data-i18n="berita.feed.title">Modus &amp; Panduan</h2></div>
+              <span class="news-feed-note" data-i18n="berita.feed.note">Pilihan AMANIN</span>
             </div>
             <div class="news-filters" role="group" aria-label="Filter berita">
-              <button class="news-filter is-active" type="button" data-filter="all" aria-pressed="true">Semua</button>
-              <button class="news-filter" type="button" data-filter="scam" aria-pressed="false">Scam</button>
-              <button class="news-filter" type="button" data-filter="fraud" aria-pressed="false">Fraud</button>
-              <button class="news-filter" type="button" data-filter="security" aria-pressed="false">Keamanan</button>
+              <button class="news-filter is-active" type="button" data-filter="all" aria-pressed="true" data-i18n="berita.filter.all">Semua</button>
+              <button class="news-filter" type="button" data-filter="scam" aria-pressed="false" data-i18n="berita.filter.scam">Scam</button>
+              <button class="news-filter" type="button" data-filter="fraud" aria-pressed="false" data-i18n="berita.filter.fraud">Fraud</button>
+              <button class="news-filter" type="button" data-filter="security" aria-pressed="false" data-i18n="berita.filter.security">Keamanan</button>
             </div>
 
             <div class="news-article-list" id="news-article-list">
               <article class="news-article news-article-featured" data-category="scam">
                 <div class="article-visual article-visual-phishing" aria-hidden="true">
                   <span class="article-visual-orbit"></span><svg viewBox="0 0 48 48"><path d="M24 5 40 12v11c0 10-6.6 16.4-16 21C14.6 39.4 8 33 8 23V12l16-7Z"/><path d="m17 24 5 5 10-11"/><path d="M33 11h.01"/></svg>
-                  <span class="visual-caption">CEK SEBELUM KLIK</span>
+                  <span class="visual-caption" data-i18n="berita.a1.visual">CEK SEBELUM KLIK</span>
                 </div>
                 <div class="article-body">
-                  <div class="article-meta"><span class="article-category category-scam"><i></i> SCAM &amp; PHISHING</span><span>Panduan AMANIN</span></div>
-                  <h3>Pesan mendesak dan tautan asing: kenali ciri phishing</h3>
-                  <p>Penipu dapat menyamar sebagai bank, kurir, atau layanan digital. Waspadai pesan yang menekanmu untuk segera login, membuka tautan, atau memberikan OTP dan PIN.</p>
-                  <div class="article-takeaway"><strong>Yang bisa kamu lakukan</strong><span>Buka aplikasi atau situs resmi secara mandiri. Jangan gunakan tautan dari pesan yang belum terverifikasi.</span></div>
-                  <a class="article-action" href="scan.html?mode=chat">Periksa isi pesan<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+                  <div class="article-meta"><span class="article-category category-scam"><i></i> <span data-i18n="berita.a1.cat">SCAM &amp; PHISHING</span></span><span data-i18n="berita.a1.source">Panduan AMANIN</span></div>
+                  <h3 data-i18n="berita.a1.title">Pesan mendesak dan tautan asing: kenali ciri phishing</h3>
+                  <p data-i18n="berita.a1.desc">Penipu dapat menyamar sebagai bank, kurir, atau layanan digital. Waspadai pesan yang menekanmu untuk segera login, membuka tautan, atau memberikan OTP dan PIN.</p>
+                  <div class="article-takeaway"><strong data-i18n="berita.a1.take.title">Yang bisa kamu lakukan</strong><span data-i18n="berita.a1.take.desc">Buka aplikasi atau situs resmi secara mandiri. Jangan gunakan tautan dari pesan yang belum terverifikasi.</span></div>
+                  <a class="article-action" href="scan.html?mode=chat"><span data-i18n="berita.a1.action">Periksa isi pesan</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
                 </div>
               </article>
 
               <article class="news-article" data-category="fraud">
                 <div class="article-icon article-icon-qr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></div>
                 <div class="article-body">
-                  <div class="article-meta"><span class="article-category category-fraud"><i></i> FRAUD PEMBAYARAN</span><span>Panduan AMANIN</span></div>
-                  <h3>Bayar lewat QR? Pastikan nama penerima sebelum konfirmasi</h3>
-                  <p>Setelah memindai QR, cocokkan nama merchant dan nominal yang muncul di aplikasi pembayaran. Batalkan transaksi jika informasinya berbeda atau terasa janggal.</p>
-                  <a class="article-action" href="scan.html?mode=qr">Periksa QR dengan AMANIN<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+                  <div class="article-meta"><span class="article-category category-fraud"><i></i> <span data-i18n="berita.a2.cat">FRAUD PEMBAYARAN</span></span><span data-i18n="berita.a2.source">Panduan AMANIN</span></div>
+                  <h3 data-i18n="berita.a2.title">Bayar lewat QR? Pastikan nama penerima sebelum konfirmasi</h3>
+                  <p data-i18n="berita.a2.desc">Setelah memindai QR, cocokkan nama merchant dan nominal yang muncul di aplikasi pembayaran. Batalkan transaksi jika informasinya berbeda atau terasa janggal.</p>
+                  <a class="article-action" href="scan.html?mode=qr"><span data-i18n="berita.a2.action">Periksa QR dengan AMANIN</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
                 </div>
               </article>
 
               <article class="news-article" data-category="scam">
                 <div class="article-icon article-icon-app" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 7h4m-4 10h4"/><path d="m3 5 2-2m14 16 2 2"/></svg></div>
                 <div class="article-body">
-                  <div class="article-meta"><span class="article-category category-scam"><i></i> FILE &amp; MALWARE</span><span>Panduan AMANIN</span></div>
-                  <h3>Jangan asal memasang file APK dari chat</h3>
-                  <p>File aplikasi yang dikirim melalui pesan dapat menyamar sebagai undangan, resi, atau dokumen. Hindari memasang file dari sumber yang tidak dikenal dan jangan berikan akses sensitif.</p>
-                  <div class="article-takeaway"><strong>Perlu diingat</strong><span>Jangan mengaktifkan izin aksesibilitas atau membagikan kode OTP atas instruksi dari pengirim file.</span></div>
+                  <div class="article-meta"><span class="article-category category-scam"><i></i> <span data-i18n="berita.a3.cat">FILE &amp; MALWARE</span></span><span data-i18n="berita.a3.source">Panduan AMANIN</span></div>
+                  <h3 data-i18n="berita.a3.title">Jangan asal memasang file APK dari chat</h3>
+                  <p data-i18n="berita.a3.desc">File aplikasi yang dikirim melalui pesan dapat menyamar sebagai undangan, resi, atau dokumen. Hindari memasang file dari sumber yang tidak dikenal dan jangan berikan akses sensitif.</p>
+                  <div class="article-takeaway"><strong data-i18n="berita.a3.take.title">Perlu diingat</strong><span data-i18n="berita.a3.take.desc">Jangan mengaktifkan izin aksesibilitas atau membagikan kode OTP atas instruksi dari pengirim file.</span></div>
                 </div>
               </article>
 
               <article class="news-article" data-category="security">
                 <div class="article-icon article-icon-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg></div>
                 <div class="article-body">
-                  <div class="article-meta"><span class="article-category category-security"><i></i> KEAMANAN AKUN</span><span>Panduan AMANIN</span></div>
-                  <h3>Jaga akun dengan kata sandi unik dan verifikasi dua langkah</h3>
-                  <p>Gunakan kata sandi berbeda untuk tiap layanan, aktifkan verifikasi tambahan, dan jangan pernah membagikan kode pemulihan kepada orang lain.</p>
-                  <a class="article-action" href="https://www.bssn.go.id/" target="_blank" rel="noopener noreferrer">Kunjungi BSSN<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6m-11 4L20 4"/><path d="M18 13v6H5V6h6"/></svg></a>
+                  <div class="article-meta"><span class="article-category category-security"><i></i> <span data-i18n="berita.a4.cat">KEAMANAN AKUN</span></span><span data-i18n="berita.a4.source">Panduan AMANIN</span></div>
+                  <h3 data-i18n="berita.a4.title">Jaga akun dengan kata sandi unik dan verifikasi dua langkah</h3>
+                  <p data-i18n="berita.a4.desc">Gunakan kata sandi berbeda untuk tiap layanan, aktifkan verifikasi tambahan, dan jangan pernah membagikan kode pemulihan kepada orang lain.</p>
+                  <a class="article-action" href="https://www.bssn.go.id/" target="_blank" rel="noopener noreferrer"><span data-i18n="berita.a4.action">Kunjungi BSSN</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6m-11 4L20 4"/><path d="M18 13v6H5V6h6"/></svg></a>
                 </div>
               </article>
 
               <article class="news-article" data-category="fraud">
                 <div class="article-icon article-icon-report" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8m-8 4h8m-8 4h5"/></svg></div>
                 <div class="article-body">
-                  <div class="article-meta"><span class="article-category category-fraud"><i></i> PELAPORAN</span><span>Kanal resmi</span></div>
-                  <h3>Jika terkena penipuan transaksi, segera hubungi kanal resmi</h3>
-                  <p>Simpan bukti percakapan dan transaksi. Untuk penipuan transaksi keuangan, Indonesia Anti-Scam Centre (IASC) menyediakan kanal pengaduan bagi masyarakat.</p>
-                  <a class="article-action" href="https://iasc.ojk.go.id/" target="_blank" rel="noopener noreferrer">Buka IASC OJK<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6m-11 4L20 4"/><path d="M18 13v6H5V6h6"/></svg></a>
+                  <div class="article-meta"><span class="article-category category-fraud"><i></i> <span data-i18n="berita.a5.cat">PELAPORAN</span></span><span data-i18n="berita.a5.source">Kanal resmi</span></div>
+                  <h3 data-i18n="berita.a5.title">Jika terkena penipuan transaksi, segera hubungi kanal resmi</h3>
+                  <p data-i18n="berita.a5.desc">Simpan bukti percakapan dan transaksi. Untuk penipuan transaksi keuangan, Indonesia Anti-Scam Centre (IASC) menyediakan kanal pengaduan bagi masyarakat.</p>
+                  <a class="article-action" href="https://iasc.ojk.go.id/" target="_blank" rel="noopener noreferrer"><span data-i18n="berita.a5.action">Buka IASC OJK</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6m-11 4L20 4"/><path d="M18 13v6H5V6h6"/></svg></a>
                 </div>
               </article>
             </div>
-            <p class="news-empty is-hidden" id="news-empty" role="status">Belum ada artikel pada kategori ini.</p>
+            <p class="news-empty is-hidden" id="news-empty" role="status" data-i18n="berita.empty">Belum ada artikel pada kategori ini.</p>
           </section>
 
           <aside class="news-source-note">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
-            <p>Konten ini merupakan panduan edukasi umum, bukan laporan statistik real-time. Ikuti kanal resmi untuk informasi dan pelaporan terbaru.</p>
+            <p data-i18n="berita.sourcenote">Konten ini merupakan panduan edukasi umum, bukan laporan statistik real-time. Ikuti kanal resmi untuk informasi dan pelaporan terbaru.</p>
           </aside>
         </div>
       </main>
 
       <nav class="bottom-nav" aria-label="Navigasi utama">
-        <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3V10Z"/></svg><span>Beranda</span></a>
-        <a class="nav-item selected" href="berita.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v14H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 8h10M7 12h10m-10 4h6"/></svg><span>Berita</span></a>
-        <a class="nav-item scan-nav" href="scan.html?mode=qr" aria-label="Cek Risiko"><span class="scan-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span><span>Cek Risiko</span></a>
-        <a class="nav-item" href="riwayat.html"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg><span>Riwayat</span></a>
-        <a class="nav-item" href="dashboard.html#profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span>Profil</span></a>
+        <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3V10Z"/></svg><span data-i18n="nav.beranda">Beranda</span></a>
+        <a class="nav-item selected" href="berita.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v14H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 8h10M7 12h10m-10 4h6"/></svg><span data-i18n="nav.berita">Berita</span></a>
+        <a class="nav-item scan-nav" href="scan.html?mode=qr" aria-label="Cek Risiko"><span class="scan-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span><span data-i18n="nav.cekrisiko">Cek Risiko</span></a>
+        <a class="nav-item" href="riwayat.html"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg><span data-i18n="nav.riwayat">Riwayat</span></a>
+        <a class="nav-item" href="dashboard.html#profil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4.2 3.1-6 8-6s7.5 1.8 8 6"/></svg><span data-i18n="nav.profil">Profil</span></a>
       </nav>
     </div>
+    <script defer src="js/i18n.js"></script>
     <script defer src="js/ui.js"></script>
+    <script defer src="js/auth.js"></script>
     <script defer src="js/news.js"></script>
   </body>
 </html>

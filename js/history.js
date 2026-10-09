@@ -4,14 +4,16 @@ window.AmaninHistory = (() => {
   const KEY = "amanin_history";
   const MAX_ENTRIES = 50;
 
-  const TYPE_LABEL = {
-    qr: "QR Code",
-    chat: "Chat",
-    screenshot: "Screenshot",
-    link: "Tautan / Link",
-    rekening: "No. / Rekening",
-    pembayaran: "Pembayaran",
+  const TYPE_KEY = {
+    qr: "history.type.qr",
+    chat: "history.type.chat",
+    screenshot: "history.type.screenshot",
+    link: "history.type.link",
+    rekening: "history.type.rekening",
+    pembayaran: "history.type.pembayaran",
   };
+  const t = (key) => window.AmaninI18n?.t(key) ?? key;
+  const tf = (key, vars) => window.AmaninI18n?.tf(key, vars) ?? key;
   const TYPE_ICON = {
     qr: '<path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/>',
     chat: '<path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/>',
@@ -50,10 +52,10 @@ window.AmaninHistory = (() => {
     const list = readAll();
     const record = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      type: TYPE_LABEL[entry.type] ? entry.type : "chat",
+      type: TYPE_KEY[entry.type] ? entry.type : "chat",
       level: entry.level === "danger" || entry.level === "caution" ? entry.level : "safe",
       score: typeof entry.score === "number" ? entry.score : null,
-      title: entry.title || "Pemeriksaan",
+      title: entry.title || "",
       source: entry.source || "",
       timestamp: new Date().toISOString(),
     };
@@ -83,23 +85,24 @@ window.AmaninHistory = (() => {
   function timeAgo(isoString) {
     const diffMs = Date.now() - new Date(isoString).getTime();
     const minute = 60000, hour = 3600000, day = 86400000;
-    if (diffMs < minute) return "Baru saja";
-    if (diffMs < hour) return `${Math.max(1, Math.floor(diffMs / minute))} menit lalu`;
-    if (diffMs < day) return `${Math.floor(diffMs / hour)} jam lalu`;
-    if (diffMs < day * 7) return `${Math.floor(diffMs / day)} hari lalu`;
-    return new Date(isoString).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+    const lang = window.AmaninI18n?.getLang?.() ?? "id";
+    if (diffMs < minute) return t("common.justnow");
+    if (diffMs < hour) return tf("common.minago", { n: Math.max(1, Math.floor(diffMs / minute)) });
+    if (diffMs < day) return tf("common.hourago", { n: Math.floor(diffMs / hour) });
+    if (diffMs < day * 7) return tf("common.dayago", { n: Math.floor(diffMs / day) });
+    return new Date(isoString).toLocaleDateString(lang === "en" ? "en-US" : "id-ID", { day: "numeric", month: "short", year: "numeric" });
   }
 
   function levelMeta(level) {
-    if (level === "danger") return { iconClass: "risk-icon", pillClass: "risk-pill", label: "Bahaya" };
-    if (level === "caution") return { iconClass: "caution-icon", pillClass: "caution-pill", label: "Waspada" };
-    return { iconClass: "safe-icon", pillClass: "safe-pill", label: "Aman" };
+    if (level === "danger") return { iconClass: "risk-icon", pillClass: "risk-pill", label: t("history.level.bahaya") };
+    if (level === "caution") return { iconClass: "caution-icon", pillClass: "caution-pill", label: t("history.level.waspada") };
+    return { iconClass: "safe-icon", pillClass: "safe-pill", label: t("history.level.aman") };
   }
 
   function renderCard(entry) {
     const meta = levelMeta(entry.level);
     const scoreText = typeof entry.score === "number" ? `${meta.label} ${entry.score}/100` : meta.label;
-    const typeLabel = TYPE_LABEL[entry.type] || "Pemeriksaan";
+    const typeLabel = t(TYPE_KEY[entry.type] || "history.type.chat");
     const icon = TYPE_ICON[entry.type] || TYPE_ICON.chat;
     const href = entry.type === "qr" ? "scan.html?mode=qr" : `scan.html?mode=chat&context=${entry.type}`;
     const titleText = entry.source ? entry.source : entry.title;

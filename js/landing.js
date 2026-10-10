@@ -3,14 +3,9 @@
   if (splash) {
     window.setTimeout(() => {
       splash.classList.add("is-leaving");
-      try {
-        localStorage.setItem("amanin_visited", "1");
-      } catch (error) {
-        console.error("Status kunjungan AMANIN gagal disimpan:", error);
-      }
       splash.addEventListener("transitionend", () => splash.remove(), { once: true });
       window.setTimeout(() => splash.remove(), 900);
-    }, 1300);
+    }, 2400);
   }
 
   const header = document.querySelector(".landing-header");

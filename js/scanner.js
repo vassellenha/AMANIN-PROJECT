@@ -199,6 +199,28 @@ function normalizeUrl(value) {
   return `https://${trimmed}`;
 }
 
+function crc16Ccitt(input) {
+  let crc = 0xffff;
+  for (let i = 0; i < input.length; i++) {
+    crc ^= input.charCodeAt(i) << 8;
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xffff;
+    }
+  }
+  return crc;
+}
+
+function evaluateQrisPayload(payload) {
+  const crcIndex = payload.lastIndexOf("6304");
+  if (!payload.startsWith("000201") || crcIndex === -1 || crcIndex !== payload.length - 8) {
+    return { recognized: false };
+  }
+  const providedCrc = payload.slice(crcIndex + 4).toUpperCase();
+  const expectedCrc = crc16Ccitt(payload.slice(0, crcIndex + 4)).toString(16).toUpperCase().padStart(4, "0");
+  return { recognized: true, crcValid: /^[0-9A-F]{4}$/.test(providedCrc) && providedCrc === expectedCrc };
+}
+
 function getUrlFindings(urlValue) {
   const findings = [];
   let parsed;
@@ -624,24 +646,39 @@ async function scanQrFile(file) {
         type: "qr",
       });
     } else {
-      const contentBody = /^(000201|https?:\/\/)/i.test(payload) ? t("scan.qr.paymentbody") : t("scan.qr.nonlinkbody");
+      const qris = evaluateQrisPayload(payload);
+      let level = "caution";
+      let contentBody = t("scan.qr.nonlinkbody");
+      let findings = [t("scan.qr.contentfinding")];
+      let score = 58;
+      if (qris.recognized && qris.crcValid) {
+        level = "safe";
+        contentBody = t("scan.qr.qrissafebody");
+        findings = [t("scan.qr.qrisvalidfinding"), t("scan.qr.contentfinding")];
+        score = 12;
+      } else if (qris.recognized && !qris.crcValid) {
+        level = "danger";
+        contentBody = t("scan.qr.qriscautionbody");
+        findings = [t("scan.qr.qrisinvalidfinding")];
+        score = 86;
+      }
       renderResult($("#qr-result"), {
         title: t("scan.qr.contenttitle"),
         subtitle: t("scan.qr.contentsubtitle"),
         message: contentBody,
-        findings: [t("scan.qr.contentfinding")],
-        level: "caution",
+        findings,
+        level,
         value: payload.slice(0, 1000),
       });
       setStatus($("#qr-status"), t("scan.qr.contentstatus"), "");
       await presentAnalysis({
-        level: "caution",
+        level,
         title: t("scan.qr.contenttitle"),
         message: contentBody,
-        findings: [t("scan.qr.contentfinding")],
+        findings,
         source: payload,
         sourceTitle: t("scan.qr.sourcetitlecontent"),
-        score: 58,
+        score,
         type: "qr",
       });
     }
@@ -1032,10 +1069,12 @@ function applyChatContext(context) {
   const config = CHAT_CONTEXTS[context] || CHAT_CONTEXTS.chat;
   currentContext = CHAT_CONTEXTS[context] ? context : "chat";
 
-  const badgeLabel = $("#context-badge-label");
-  const badgeSvg = $("#context-badge svg");
-  if (badgeLabel) badgeLabel.textContent = t(config.badgeKey);
-  if (badgeSvg) badgeSvg.innerHTML = config.badgeIcon;
+  for (const chip of document.querySelectorAll(".context-chip")) {
+    const selected = chip.dataset.context === currentContext;
+    chip.classList.toggle("is-active", selected);
+    chip.setAttribute("aria-selected", String(selected));
+    if (selected) chip.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" });
+  }
 
   const icon = $("#conversation-icon");
   if (icon) {
@@ -1060,6 +1099,7 @@ function applyChatContext(context) {
   $("#quick-fields-pembayaran")?.classList.toggle("is-hidden", config.quickFields !== "pembayaran");
   $(".conversation-check")?.classList.toggle("is-hidden", !config.showText);
   $("#screenshot-section")?.classList.toggle("is-hidden", !config.showScreenshot);
+  $("#screenshot-divider")?.classList.toggle("is-hidden", !config.showText);
 
   updateAnalyzeButtonState();
   return config;
@@ -1084,6 +1124,16 @@ function focusChatTarget(target) {
 document.addEventListener("amanin:langchange", () => {
   applyChatContext(currentContext);
   conversationCount.textContent = `${conversationInput.value.length} / 2000 ${t("scan.charcount")}`;
+});
+
+$("#context-switcher")?.addEventListener("click", (event) => {
+  const chip = event.target.closest(".context-chip");
+  if (!chip || chip.classList.contains("is-active")) return;
+  const config = applyChatContext(chip.dataset.context);
+  const url = new URL(window.location.href);
+  url.searchParams.set("context", currentContext);
+  history.replaceState(null, "", url);
+  focusChatTarget(config.focus);
 });
 
 window.addEventListener("hashchange", () => setMode(getInitialMode(), false));

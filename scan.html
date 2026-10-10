@@ -72,7 +72,7 @@
             </button>
           </div>
 
-          <section class="scan-panel" id="panel-qr" role="tabpanel" aria-labelledby="tab-qr">
+          <section class="scan-panel qr-panel" id="panel-qr" role="tabpanel" aria-labelledby="tab-qr">
             <div class="panel-heading">
               <span class="panel-icon qr-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M8 8h3v3H8zm5 0h3v3h-3zm-5 5h3v3H8zm6 1h2m-2 2h2"/></svg></span>
               <span><h2 data-i18n="scan.qr.title">Pindai QR Code</h2><p data-i18n="scan.qr.desc">Pastikan tujuan QR aman sebelum membuka atau membayar.</p></span>
@@ -104,10 +104,28 @@
           </section>
 
           <section class="scan-panel is-hidden" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat">
-            <span class="context-badge" id="context-badge">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg>
-              <span id="context-badge-label">Scan Chat</span>
-            </span>
+            <div class="context-switcher" id="context-switcher" role="tablist" aria-label="Pilih jenis konten yang diperiksa">
+              <button type="button" class="context-chip is-active" data-context="chat" role="tab" aria-selected="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg>
+                <span data-i18n="scan.ctx.chat.badge">Scan Chat</span>
+              </button>
+              <button type="button" class="context-chip" data-context="screenshot" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><circle cx="9" cy="10" r="2"/><path d="m4 16 5-4 3 3 2-2 6 4"/></svg>
+                <span data-i18n="scan.ctx.screenshot.badge">Screenshot</span>
+              </button>
+              <button type="button" class="context-chip" data-context="link" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.2-1.2"/></svg>
+                <span data-i18n="scan.ctx.link.badge">Tautan / Link</span>
+              </button>
+              <button type="button" class="context-chip" data-context="rekening" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v13H3z"/><circle cx="10" cy="11" r="2.5"/><path d="M6 17c.8-2 2.2-3 4-3s3.2 1 4 3m3-6h2"/></svg>
+                <span data-i18n="scan.ctx.rekening.badge">No. / Rekening</span>
+              </button>
+              <button type="button" class="context-chip" data-context="pembayaran" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4z"/><path d="M4 9h16m-6 5h3"/></svg>
+                <span data-i18n="scan.ctx.pembayaran.badge">Pembayaran</span>
+              </button>
+            </div>
             <section class="conversation-check" aria-labelledby="conversation-title">
               <div class="panel-heading">
                 <span class="panel-icon chat-icon" id="conversation-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 3V5Z"/><path d="M8 9h8m-8 4h5"/></svg></span>

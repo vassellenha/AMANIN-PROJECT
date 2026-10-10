@@ -694,26 +694,64 @@ async function scanQrFile(file) {
   }
 }
 
-async function scanQrExample(payload) {
-  if (qrBusy) return;
-  qrBusy = true;
-  startAnalysis(t("scan.cam.msgstart"));
-  $("#qr-analyze").disabled = true;
-  setStatus($("#qr-status"), t("scan.qr.msgreading"), "working");
-  $("#qr-result").classList.add("is-hidden");
+async function buildExampleQrFile(payload) {
+  if (typeof window.QRCode !== "function") {
+    throw new Error(t("scan.qr.errexamplegen"));
+  }
+  const holder = document.createElement("div");
+  holder.style.cssText = "position:absolute;left:-9999px;top:-9999px;";
+  document.body.append(holder);
   try {
-    await processQrPayload(payload);
-  } catch (error) {
-    hideAnalysisLoading();
-    setStatus($("#qr-status"), error.message || t("scan.qr.errgeneric"), "error");
+    new window.QRCode(holder, {
+      text: payload,
+      width: 360,
+      height: 360,
+      correctLevel: window.QRCode.CorrectLevel.M,
+    });
+    const canvas = await new Promise((resolve, reject) => {
+      const start = performance.now();
+      const poll = () => {
+        const found = holder.querySelector("canvas");
+        if (found) return resolve(found);
+        if (performance.now() - start > 2000) return reject(new Error(t("scan.qr.errexamplegen")));
+        window.requestAnimationFrame(poll);
+      };
+      poll();
+    });
+    const dataUrl = canvas.toDataURL("image/png");
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+    return new File([blob], "contoh-qr-berbahaya.png", { type: "image/png" });
   } finally {
-    qrBusy = false;
-    $("#qr-analyze").disabled = !selectedQrFile;
+    holder.remove();
   }
 }
 
-$("#qr-example")?.addEventListener("click", () => {
-  scanQrExample("http://verifikasi-akun-blokir.secure-login-bri.xyz/klaim-hadiah");
+$("#qr-example")?.addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  setStatus($("#qr-status"), t("scan.qr.msggenerating"), "working");
+  try {
+    const file = await buildExampleQrFile("http://verifikasi-akun-blokir.secure-login-bri.xyz/klaim-hadiah");
+    selectedQrFile = null;
+    $("#qr-analyze").disabled = true;
+    $("#qr-preview-wrap").classList.add("is-hidden");
+    $("#qr-result").classList.add("is-hidden");
+    const inserted = previewFile(file, $("#qr-file"), $("#qr-preview"), $("#qr-preview-wrap"), $("#qr-status"), $("#qr-remove"), () => {
+      selectedQrFile = null;
+      $("#qr-analyze").disabled = true;
+      $("#qr-result").classList.add("is-hidden");
+    }, t("scan.qr.toastexample"));
+    if (inserted) {
+      selectedQrFile = file;
+      $("#qr-analyze").disabled = false;
+      setStatus($("#qr-status"), t("scan.qr.msgexampleready"), "");
+    }
+  } catch (error) {
+    setStatus($("#qr-status"), error.message || t("scan.qr.errexamplegen"), "error");
+  } finally {
+    button.disabled = false;
+  }
 });
 
 async function getOcrWorker() {

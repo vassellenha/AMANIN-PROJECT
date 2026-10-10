@@ -184,6 +184,10 @@ window.AmaninI18n = (() => {
       "scan.qr.cameraupload": "Ambil foto QR / pilih dari galeri",
       "scan.qr.exampledanger": "Contoh QR Berbahaya",
       "scan.qr.status.idle": "Arahkan kamera ke QR atau unggah gambarnya.",
+      "scan.qr.msggenerating": "Membuat gambar contoh QR berbahaya…",
+      "scan.qr.toastexample": "Contoh QR berbahaya berhasil dibuat",
+      "scan.qr.msgexampleready": "Contoh QR siap. Tekan \"Pindai QR\" untuk melihat hasil pemeriksaannya.",
+      "scan.qr.errexamplegen": "Gagal membuat contoh QR. Coba lagi.",
 
       "scan.ctx.chat.badge": "Scan Chat",
       "scan.ctx.chat.heading": "Input teks percakapan",
@@ -690,6 +694,10 @@ window.AmaninI18n = (() => {
       "scan.qr.cameraupload": "Take a photo of the QR / choose from gallery",
       "scan.qr.exampledanger": "Dangerous QR Example",
       "scan.qr.status.idle": "Point your camera at a QR code or upload an image.",
+      "scan.qr.msggenerating": "Generating a dangerous QR example image…",
+      "scan.qr.toastexample": "Dangerous QR example created",
+      "scan.qr.msgexampleready": "Example QR ready. Tap \"Scan QR\" to see the check result.",
+      "scan.qr.errexamplegen": "Couldn't generate the QR example. Try again.",
 
       "scan.ctx.chat.badge": "Scan Chat",
       "scan.ctx.chat.heading": "Enter the conversation text",

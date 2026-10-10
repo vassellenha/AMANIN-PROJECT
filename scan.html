@@ -99,6 +99,10 @@
             </div>
             <label class="camera-upload qr-camera-upload" for="qr-camera-file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 15v5h16v-5"/></svg> <span data-i18n="scan.qr.cameraupload">Ambil foto QR / pilih dari galeri</span></label>
             <input class="file-input" id="qr-camera-file" type="file" accept="image/*" capture="environment">
+            <button class="conversation-tool qr-example-btn" id="qr-example" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1.2 1-1.7 1.4-1.7 2.7m0 3h.01"/></svg>
+              <span data-i18n="scan.qr.exampledanger">Contoh QR Berbahaya</span>
+            </button>
             <p class="inline-status" id="qr-status" role="status" aria-live="polite" data-i18n="scan.qr.status.idle">Arahkan kamera ke QR atau unggah gambarnya.</p>
             <div class="scan-result is-hidden" id="qr-result" aria-live="polite"></div>
           </section>

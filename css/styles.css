@@ -247,7 +247,7 @@ svg { display: block; width: 1.3rem; height: 1.3rem; fill: none; stroke: current
 #theme-toggle:checked ~ .topbar .moon-icon { opacity: 1; color: #58a0ff; }
 #theme-toggle:focus-visible ~ .topbar .theme-toggle { outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 5px; }
 .lang-switch { position: relative; flex: 0 0 auto; }
-.lang-switch-button { height: 28px; display: inline-flex; align-items: center; gap: 4px; padding: 0 10px; border: 1px solid var(--border); border-radius: 20px; color: var(--text-muted); background: var(--surface-soft); font: 700 10px "Inter",sans-serif; letter-spacing: .3px; cursor: pointer; transition: border-color .15s, color .15s, border-radius .15s; }
+.lang-switch-button { height: 28px; display: inline-flex; align-items: center; gap: 4px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); border-radius: 20px; color: var(--text-muted); background: var(--surface-soft); font: 700 10px "Inter",sans-serif; letter-spacing: .3px; cursor: pointer; transition: border-color .15s, color .15s, border-radius .15s; }
 .lang-switch-button:hover { color: var(--cyan); border-color: var(--cyan); }
 .lang-switch-button svg { width: 10px; height: 10px; transition: transform .2s ease; }
 .lang-switch.is-open .lang-switch-button { color: var(--cyan); border-color: var(--cyan); border-radius: 14px 14px 4px 4px; }

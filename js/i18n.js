@@ -182,6 +182,7 @@ window.AmaninI18n = (() => {
       "scan.qr.analyze": "Pindai QR",
       "scan.qr.camera": "Buka Kamera",
       "scan.qr.cameraupload": "Ambil foto QR / pilih dari galeri",
+      "scan.qr.exampledanger": "Contoh QR Berbahaya",
       "scan.qr.status.idle": "Arahkan kamera ke QR atau unggah gambarnya.",
 
       "scan.ctx.chat.badge": "Scan Chat",
@@ -687,6 +688,7 @@ window.AmaninI18n = (() => {
       "scan.qr.analyze": "Scan QR",
       "scan.qr.camera": "Open Camera",
       "scan.qr.cameraupload": "Take a photo of the QR / choose from gallery",
+      "scan.qr.exampledanger": "Dangerous QR Example",
       "scan.qr.status.idle": "Point your camera at a QR code or upload an image.",
 
       "scan.ctx.chat.badge": "Scan Chat",

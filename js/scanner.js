@@ -593,6 +593,69 @@ async function readQr(imageData) {
   throw new Error(t("scan.qr.errnotavailable"));
 }
 
+async function processQrPayload(payload) {
+  const isWebLink = /^(https?:\/\/|www\.)/i.test(payload);
+  if (isWebLink) {
+    const assessment = getUrlFindings(payload);
+    const linkTitle = assessment.level === "danger" ? t("scan.qr.linktitledanger") : assessment.level === "caution" ? t("scan.qr.linktitlecaution") : t("scan.qr.linktitlesafe");
+    renderResult($("#qr-result"), {
+      title: linkTitle,
+      subtitle: t("scan.qr.linksubtitle"),
+      message: assessment.findings.length ? t("scan.qr.linkbodyfindings") : t("scan.qr.linkbodynofindings"),
+      findings: assessment.findings.length ? assessment.findings : [t("scan.qr.linkfallbackfinding")],
+      level: assessment.level,
+      value: payload.slice(0, 1000),
+    });
+    setStatus($("#qr-status"), t("scan.qr.linkstatus"), "");
+    await presentAnalysis({
+      level: assessment.level,
+      title: linkTitle,
+      message: assessment.findings.length ? t("scan.qr.linkanalysisfindings") : t("scan.qr.linkbodynofindings"),
+      findings: assessment.findings.length ? assessment.findings : [t("scan.qr.linkfallbackfinding")],
+      source: payload,
+      sourceTitle: t("scan.qr.sourcetitlelink"),
+      score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
+      type: "qr",
+    });
+  } else {
+    const qris = evaluateQrisPayload(payload);
+    let level = "caution";
+    let contentBody = t("scan.qr.nonlinkbody");
+    let findings = [t("scan.qr.contentfinding")];
+    let score = 58;
+    if (qris.recognized && qris.crcValid) {
+      level = "safe";
+      contentBody = t("scan.qr.qrissafebody");
+      findings = [t("scan.qr.qrisvalidfinding"), t("scan.qr.contentfinding")];
+      score = 12;
+    } else if (qris.recognized && !qris.crcValid) {
+      level = "danger";
+      contentBody = t("scan.qr.qriscautionbody");
+      findings = [t("scan.qr.qrisinvalidfinding")];
+      score = 86;
+    }
+    renderResult($("#qr-result"), {
+      title: t("scan.qr.contenttitle"),
+      subtitle: t("scan.qr.contentsubtitle"),
+      message: contentBody,
+      findings,
+      level,
+      value: payload.slice(0, 1000),
+    });
+    setStatus($("#qr-status"), t("scan.qr.contentstatus"), "");
+    await presentAnalysis({
+      level,
+      title: t("scan.qr.contenttitle"),
+      message: contentBody,
+      findings,
+      source: payload,
+      sourceTitle: t("scan.qr.sourcetitlecontent"),
+      score,
+      type: "qr",
+    });
+  }
+}
+
 async function scanQrFile(file) {
   if (qrBusy) return;
   qrBusy = true;
@@ -621,67 +684,7 @@ async function scanQrFile(file) {
       });
       return;
     }
-    const payload = result.data;
-    const isWebLink = /^(https?:\/\/|www\.)/i.test(payload);
-    if (isWebLink) {
-      const assessment = getUrlFindings(payload);
-      const linkTitle = assessment.level === "danger" ? t("scan.qr.linktitledanger") : assessment.level === "caution" ? t("scan.qr.linktitlecaution") : t("scan.qr.linktitlesafe");
-      renderResult($("#qr-result"), {
-        title: linkTitle,
-        subtitle: t("scan.qr.linksubtitle"),
-        message: assessment.findings.length ? t("scan.qr.linkbodyfindings") : t("scan.qr.linkbodynofindings"),
-        findings: assessment.findings.length ? assessment.findings : [t("scan.qr.linkfallbackfinding")],
-        level: assessment.level,
-        value: payload.slice(0, 1000),
-      });
-      setStatus($("#qr-status"), t("scan.qr.linkstatus"), "");
-      await presentAnalysis({
-        level: assessment.level,
-        title: linkTitle,
-        message: assessment.findings.length ? t("scan.qr.linkanalysisfindings") : t("scan.qr.linkbodynofindings"),
-        findings: assessment.findings.length ? assessment.findings : [t("scan.qr.linkfallbackfinding")],
-        source: payload,
-        sourceTitle: t("scan.qr.sourcetitlelink"),
-        score: assessment.level === "danger" ? 92 : assessment.level === "caution" ? 58 : 12,
-        type: "qr",
-      });
-    } else {
-      const qris = evaluateQrisPayload(payload);
-      let level = "caution";
-      let contentBody = t("scan.qr.nonlinkbody");
-      let findings = [t("scan.qr.contentfinding")];
-      let score = 58;
-      if (qris.recognized && qris.crcValid) {
-        level = "safe";
-        contentBody = t("scan.qr.qrissafebody");
-        findings = [t("scan.qr.qrisvalidfinding"), t("scan.qr.contentfinding")];
-        score = 12;
-      } else if (qris.recognized && !qris.crcValid) {
-        level = "danger";
-        contentBody = t("scan.qr.qriscautionbody");
-        findings = [t("scan.qr.qrisinvalidfinding")];
-        score = 86;
-      }
-      renderResult($("#qr-result"), {
-        title: t("scan.qr.contenttitle"),
-        subtitle: t("scan.qr.contentsubtitle"),
-        message: contentBody,
-        findings,
-        level,
-        value: payload.slice(0, 1000),
-      });
-      setStatus($("#qr-status"), t("scan.qr.contentstatus"), "");
-      await presentAnalysis({
-        level,
-        title: t("scan.qr.contenttitle"),
-        message: contentBody,
-        findings,
-        source: payload,
-        sourceTitle: t("scan.qr.sourcetitlecontent"),
-        score,
-        type: "qr",
-      });
-    }
+    await processQrPayload(result.data);
   } catch (error) {
     hideAnalysisLoading();
     setStatus($("#qr-status"), error.message || t("scan.qr.errgeneric"), "error");
@@ -690,6 +693,28 @@ async function scanQrFile(file) {
     $("#qr-analyze").disabled = !selectedQrFile;
   }
 }
+
+async function scanQrExample(payload) {
+  if (qrBusy) return;
+  qrBusy = true;
+  startAnalysis(t("scan.cam.msgstart"));
+  $("#qr-analyze").disabled = true;
+  setStatus($("#qr-status"), t("scan.qr.msgreading"), "working");
+  $("#qr-result").classList.add("is-hidden");
+  try {
+    await processQrPayload(payload);
+  } catch (error) {
+    hideAnalysisLoading();
+    setStatus($("#qr-status"), error.message || t("scan.qr.errgeneric"), "error");
+  } finally {
+    qrBusy = false;
+    $("#qr-analyze").disabled = !selectedQrFile;
+  }
+}
+
+$("#qr-example")?.addEventListener("click", () => {
+  scanQrExample("http://verifikasi-akun-blokir.secure-login-bri.xyz/klaim-hadiah");
+});
 
 async function getOcrWorker() {
   if (ocrWorkerPromise) return ocrWorkerPromise;

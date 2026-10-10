@@ -84,6 +84,8 @@
 .secondary-action,.camera-upload { color: var(--ink); border-color: var(--border); background: var(--surface-soft); }
 .camera-upload { display: flex; }
 .qr-camera-upload { min-height: 35px; color: var(--text-muted); border: 0; background: transparent; }
+.qr-example-btn { width: 100%; color: var(--danger); border-color: color-mix(in srgb, var(--danger) 32%, var(--border)); background: color-mix(in srgb, var(--danger) 8%, var(--surface-strong)); }
+.qr-example-btn:hover { border-color: var(--danger); }
 .screenshot-camera { min-height: 38px; }
 .analyze-button { min-height: 46px; }
 .inline-status { margin: -2px 0 0; color: var(--text-subtle); font-size: 10px; line-height: 1.5; text-align: center; }
